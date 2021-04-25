@@ -13,6 +13,10 @@ buildscript {
 }
 
 allprojects {
+    def propsFile = rootProject.file('keystore.properties')
+    def props = new Properties()
+    props.load(new FileInputStream(propsFile))
+
     repositories {
         google()
         jcenter()
@@ -26,7 +30,7 @@ allprojects {
                 // This should always be `mapbox` (not your username).
                 username = 'mapbox'
                 // Use the secret token you stored in gradle.properties as the password
-                password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
+                password = props['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
             }
         }
     }
