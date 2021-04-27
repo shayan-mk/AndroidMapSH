@@ -1,16 +1,16 @@
-package com.example.androidmapsh.ui.home;
+package com.example.androidmapsh.ui.bookmarks;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class HomeViewModel extends ViewModel {
+public class BookmarksViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public HomeViewModel() {
+    public BookmarksViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+        mText.setValue("This is bookmarks fragment");
     }
 
     public LiveData<String> getText() {
