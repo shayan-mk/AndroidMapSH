@@ -1,9 +1,29 @@
 package com.example.androidmapsh.database;
 
-public class Location {
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import java.io.Serializable;
+
+//Define table name
+@Entity(tableName = "Location")
+public class Location implements Serializable {
+    //Create id column
+    @PrimaryKey(autoGenerate = true)
+    private int ID;
+
+    //Create name column
+    @ColumnInfo(name = "name")
     private final String name;
+
+    //Create latitude column
+    @ColumnInfo(name = "latitude")
     private final float latitude;
+
+    //Create longitude column
+    @ColumnInfo(name = "longitude")
     private final float longitude;
 
     public Location(String name, float latitude, float longitude) {
