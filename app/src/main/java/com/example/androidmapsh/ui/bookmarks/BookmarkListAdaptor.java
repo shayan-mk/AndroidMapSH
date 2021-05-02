@@ -14,14 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidmapsh.R;
-import com.example.androidmapsh.model.Bookmark;
+import com.example.androidmapsh.database.Location;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BookmarkListAdaptor extends RecyclerView.Adapter<BookmarkListAdaptor.ViewHolder> {
-    private final List<Bookmark> bookmarkList;
+    private final List<Location> bookmarkList;
     private final Context context;
     private final OnItemClickListener listener;
     private final Spannable.Factory spannableFactory;
@@ -57,7 +57,7 @@ public class BookmarkListAdaptor extends RecyclerView.Adapter<BookmarkListAdapto
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Bookmark bookmark = bookmarkList.get(position);
+        Location bookmark = bookmarkList.get(position);
 
         holder.name.setText(bookmark.getName());
         DecimalFormat df = new DecimalFormat();
@@ -79,7 +79,7 @@ public class BookmarkListAdaptor extends RecyclerView.Adapter<BookmarkListAdapto
         return bookmarkList.size();
     }
 
-    public void reloadBookmarks(List<Bookmark> newData) {
+    public void reloadBookmarks(List<Location> newData) {
         bookmarkList.clear();
         bookmarkList.addAll(newData);
         notifyDataSetChanged();
