@@ -6,10 +6,13 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.List;
 
 //Define table name
 @Entity(tableName = "Location")
 public class Location implements Serializable {
+    private static List<Location> locations;
+
     //Create id column
     @PrimaryKey(autoGenerate = true)
     private final int ID;
@@ -48,5 +51,29 @@ public class Location implements Serializable {
 
     public float getLongitude() {
         return longitude;
+    }
+
+    public void addLocation(Location location){
+        locations.add(location);
+    }
+
+    private Location getLocationById(int id){
+        for (Location location : locations) {
+            if(location.getID() == id)
+                return location;
+        }
+        return null;
+    }
+
+    private int getNumberOfLocations(){
+        return locations.size();
+    }
+
+    private List<Location> getAllLocations(){
+        return locations;
+    }
+
+    private void updateLocations(List<Location> locationList){
+        locations = locationList;
     }
 }
