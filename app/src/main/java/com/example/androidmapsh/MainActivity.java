@@ -1,6 +1,7 @@
 package com.example.androidmapsh;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -10,6 +11,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
