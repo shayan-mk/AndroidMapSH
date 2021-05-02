@@ -25,7 +25,7 @@ public class SearchFragment extends Fragment {
     public View onCreate(@NonNull LayoutInflater inflater,
                          ViewGroup container, Bundle savedInstanceState){
 
-        //Assign variavle
+        //Assign variable
         View root = inflater.inflate(R.layout.search_box, container, false);
         final TextView textView = root.findViewById(R.id.text_view);
 
@@ -44,7 +44,8 @@ public class SearchFragment extends Fragment {
         });
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, recommendations)
+                android.R.layout.simple_list_item_1, recommendations);
+
         return root;
     }
 }
