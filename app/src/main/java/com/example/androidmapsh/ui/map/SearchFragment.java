@@ -25,10 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchFragment extends Fragment {
-    //Initialize variables
-    TextView textView;
     List<String> recommendations;
-    Dialog dialog;
 
 
     public View onCreate(@NonNull LayoutInflater inflater,
@@ -78,11 +75,6 @@ public class SearchFragment extends Fragment {
 
         return root;
     }
-
-
-
-
-
 
 }
 
