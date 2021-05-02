@@ -33,6 +33,9 @@ allprojects {
                 password = props['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
             }
         }
+        maven {
+            url 'https://jitpack.io'
+        }
     }
 }
 

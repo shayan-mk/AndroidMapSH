@@ -72,4 +72,7 @@ dependencies {
     testImplementation "androidx.room:room-testing:$room_version"
 
     implementation 'androidx.multidex:multidex:2.0.1'
+
+    //Add Library
+    compile 'com.github.mirrajab:serach-dialog:1.1'
 }
