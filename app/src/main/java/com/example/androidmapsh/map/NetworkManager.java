@@ -5,6 +5,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.example.androidmapsh.MainActivity;
+import com.example.androidmapsh.R;
 import com.example.androidmapsh.database.Location;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -24,8 +25,6 @@ public class NetworkManager {
     private static NetworkManager instance = null;
     private static final String TAG = "NetworkManager";
 
-    private static final String MAPBOX_API_KEY = "pk.eyJ1Ijoic2hheWFubWsiLCJhIjoiY2tueDVveGswMTNmYjJ4bWtsZ2l3Ym5rYyJ9.DjUcY30GG4v0FQs9UpoZ9w";
-
     private NetworkManager() {
     }
 
@@ -42,7 +41,7 @@ public class NetworkManager {
 
     private void runLoadCrypto(String name, Handler handler) {
         HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("access_token", MAPBOX_API_KEY);
+        parameters.put("access_token", MainActivity.MAPBOX_API_KEY);
         String rawUrl = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + name + ".json";
         String url = buildURL(rawUrl, parameters);
 

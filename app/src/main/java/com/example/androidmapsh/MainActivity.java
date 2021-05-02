@@ -3,6 +3,7 @@ package com.example.androidmapsh;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mapbox.mapboxsdk.Mapbox;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -22,15 +23,15 @@ public class MainActivity extends AppCompatActivity {
     public static final int DB_LOCATION_INSERT = BASE_MESSAGE_CODE + 2;
     public static final int DB_LOCATION_DELETE = BASE_MESSAGE_CODE + 3;
     public static final int NET_SEARCH_RESULT = BASE_MESSAGE_CODE + 4;
+    public static String MAPBOX_API_KEY = "";
 
-
-    // static final handler message codes will be written here
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         threadPool = Executors.newFixedThreadPool(5);
+        MAPBOX_API_KEY = getString(R.string.access_token);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
