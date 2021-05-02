@@ -7,6 +7,8 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import com.example.androidmapsh.MainActivity;
+
 import java.util.List;
 
 import static androidx.room.OnConflictStrategy.REPLACE;
@@ -15,12 +17,38 @@ public class DatabaseManager {
 
 
     private static RoomDB database = RoomDB.getDatabase();
-    private static List<Location> locations;
 
 
+    public Runnable loadLocationList( Handler handler) {
+        return () -> {
+            List<Location> locationDataList = loadLocations();
+            Message message = new Message();
+            message.what = MainActivity.DB_LOCATION_LOAD;
+            message.arg1 = 1;
+            message.obj = locationDataList;
+            handler.sendMessage(message);
+        };
+    }
 
+    public Runnable insertLocation( Location location, Handler handler) {
+        return () -> {
+            insertLocation(location);
+            Message message = new Message();
+            message.what = MainActivity.DB_LOCATION_INSERT;
+            message.arg1 = 1;
+            handler.sendMessage(message);
+        };
+    }
 
-    //public Runnable insertLocation()
+    public Runnable deleteLocation( Location location, Handler handler) {
+        return () -> {
+            deleteLocation(location);
+            Message message = new Message();
+            message.what = MainActivity.DB_LOCATION_DELETE;
+            message.arg1 = 1;
+            handler.sendMessage(message);
+        };
+    }
 
     public synchronized void insertLocation(Location location){
         database.mainDao().insert(location);
@@ -28,11 +56,6 @@ public class DatabaseManager {
 
     public synchronized void deleteLocation(Location location){
         database.mainDao().delete(location);
-    }
-
-
-    public synchronized void updateLocation(int sID, String sName){
-        database.mainDao().update(sID, sName);
     }
 
     public List<Location> loadLocations(){

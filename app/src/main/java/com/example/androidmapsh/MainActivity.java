@@ -17,6 +17,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ExecutorService threadPool;
 
+    public static final int DB_LOCATION_LOAD = 1001;
+    public static final int DB_LOCATION_INSERT = DB_LOCATION_LOAD + 1;
+    public static final int DB_LOCATION_DELETE = DB_LOCATION_LOAD + 2;
+
+
     // static final handler message codes will be written here
 
     @Override
