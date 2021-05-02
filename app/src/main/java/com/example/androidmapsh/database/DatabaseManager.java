@@ -17,7 +17,7 @@ public class DatabaseManager {
 
 
     private static RoomDB database = RoomDB.getDatabase();
-
+    private static DatabaseManager databaseManager = null;
 
     public Runnable loadLocationList( Handler handler) {
         return () -> {
@@ -46,6 +46,7 @@ public class DatabaseManager {
             Message message = new Message();
             message.what = MainActivity.DB_LOCATION_DELETE;
             message.arg1 = 1;
+            message.obj = location;
             handler.sendMessage(message);
         };
     }
@@ -60,5 +61,12 @@ public class DatabaseManager {
 
     public List<Location> loadLocations(){
         return database.mainDao().getAll();
+    }
+
+    public static DatabaseManager getInstance(){
+        if(databaseManager == null){
+            databaseManager = new DatabaseManager();
+        }
+        return databaseManager;
     }
 }

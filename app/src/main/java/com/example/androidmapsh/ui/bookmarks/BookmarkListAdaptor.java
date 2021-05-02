@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidmapsh.R;
@@ -21,15 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookmarkListAdaptor extends RecyclerView.Adapter<BookmarkListAdaptor.ViewHolder> {
-    private final List<Location> bookmarkList;
+    private final LiveData<List<Location>> bookmarkList;
     private final Context context;
     private final OnItemClickListener listener;
     private final Spannable.Factory spannableFactory;
 
-    public BookmarkListAdaptor(Context context, OnItemClickListener listener) {
+    public BookmarkListAdaptor(Context context, OnItemClickListener listener, LiveData<List<Location>> bookmarks) {
         this.context = context;
-        this.bookmarkList = new ArrayList<>();
         this.listener = listener;
+        this.bookmarkList = bookmarks;
 
         spannableFactory = new Spannable.Factory() {
             @Override
@@ -57,7 +58,7 @@ public class BookmarkListAdaptor extends RecyclerView.Adapter<BookmarkListAdapto
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Location location = bookmarkList.get(position);
+        Location location = bookmarkList.getValue().get(position);
 
         holder.name.setText(location.getName());
         DecimalFormat df = new DecimalFormat();
@@ -76,14 +77,9 @@ public class BookmarkListAdaptor extends RecyclerView.Adapter<BookmarkListAdapto
 
     @Override
     public int getItemCount() {
-        return bookmarkList.size();
+        return bookmarkList.getValue().size();
     }
 
-    public void reloadBookmarks(List<Location> newData) {
-        bookmarkList.clear();
-        bookmarkList.addAll(newData);
-        notifyDataSetChanged();
-    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // Your holder should contain a member variable

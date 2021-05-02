@@ -54,6 +54,7 @@ public class SearchFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 itemsAdapter.clear();
                 if(count != 0){
+                    NetworkManager.getInstance().loadSearchResults(s.toString(), );
                     recommendations = NetworkManager.getRecommendations(s.toString());
                     itemsAdapter.addAll(recommendations);
                 }

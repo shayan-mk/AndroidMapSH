@@ -97,12 +97,14 @@ public class NetworkManager {
         return url;
 
     }
-}
-
-
 
     //TODO
     public static List<String> getRecommendations(String text){
         return null;
     }
 }
+
+
+
+
+

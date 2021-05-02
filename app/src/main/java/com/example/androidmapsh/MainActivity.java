@@ -1,6 +1,7 @@
 package com.example.androidmapsh;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.ArrayAdapter;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -19,6 +20,7 @@ import java.util.concurrent.Executors;
 public class MainActivity extends AppCompatActivity {
 
     private ExecutorService threadPool;
+    private Handler handler;
 
     private static final int BASE_MESSAGE_CODE = 1000;
     public static final int DB_LOCATION_LOAD = BASE_MESSAGE_CODE + 1;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         threadPool = Executors.newFixedThreadPool(5);
         MAPBOX_API_KEY = getString(R.string.access_token);
+        handler = new Handler();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -44,6 +47,14 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+    }
+
+    public void execute(Runnable runnable){
+        threadPool.execute(runnable);
+    }
+
+    public Handler getHandler(){
+        return handler;
     }
 
 }

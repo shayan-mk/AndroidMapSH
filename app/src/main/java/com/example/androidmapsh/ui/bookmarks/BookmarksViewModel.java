@@ -1,19 +1,53 @@
 package com.example.androidmapsh.ui.bookmarks;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.androidmapsh.database.Location;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class BookmarksViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private MutableLiveData<List<Location>> bookmarks;
+    private List<Location> cacheBookmarks;
 
     public BookmarksViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is bookmarks fragment");
+        bookmarks = new MutableLiveData<List<Location>>();
+
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<List<Location>> getBookmarks() {
+        return bookmarks;
+    }
+
+    public void setBookmarks(List<Location> bookmarks) {
+        cacheBookmarks = bookmarks;
+        readFromCache();
+    }
+
+    public void deleteBookmark( Location location){
+        cacheBookmarks.remove(location);
+        readFromCache();
+    }
+
+    public void filterBookmarks(String text){
+        List<Location> filteredList = new ArrayList<>();
+        for (Location bookmark : cacheBookmarks) {
+            if(bookmark.getName().startsWith(text)){
+                filteredList.add(bookmark);
+            }
+        }
+        bookmarks.setValue(filteredList);
+    }
+
+    private void readFromCache(){
+        bookmarks.setValue(cacheBookmarks);
     }
 }
