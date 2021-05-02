@@ -57,21 +57,21 @@ public class BookmarkListAdaptor extends RecyclerView.Adapter<BookmarkListAdapto
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Location bookmark = bookmarkList.get(position);
+        Location location = bookmarkList.get(position);
 
-        holder.name.setText(bookmark.getName());
+        holder.name.setText(location.getName());
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(5);
 
-        Spannable spannable = new SpannableString(df.format(bookmark.getLatitude()));
-//        spannable.setSpan(new ForegroundColorSpan(bookmark.getPercentChange1h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        Spannable spannable = new SpannableString(df.format(location.getLatitude()));
+//        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange1h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         holder.latitude.setText(spannable, TextView.BufferType.SPANNABLE);
 
-        spannable = new SpannableString(df.format(bookmark.getLongitude()));
-//        spannable.setSpan(new ForegroundColorSpan(bookmark.getPercentChange24h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable = new SpannableString(df.format(location.getLongitude()));
+//        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange24h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         holder.longitude.setText(spannable, TextView.BufferType.SPANNABLE);
 
-//        holder.itemView.setOnClickListener(view -> listener.onItemClick(bookmark.getSymbol()));
+//        holder.itemView.setOnClickListener(view -> listener.onItemClick(location.getSymbol()));
     }
 
     @Override
