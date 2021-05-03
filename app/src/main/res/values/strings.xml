@@ -8,4 +8,6 @@
     <string name="user_location_permission_explanation">error!</string>
     <string name="user_location_permission_not_granted">error!</string>
     <string name="search">Search…</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="delete_data">Delete Data</string>
 </resources>

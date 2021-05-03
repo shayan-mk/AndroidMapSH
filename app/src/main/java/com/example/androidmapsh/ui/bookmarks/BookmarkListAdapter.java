@@ -3,6 +3,7 @@ package com.example.androidmapsh.ui.bookmarks;
 import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,18 +17,20 @@ import com.example.androidmapsh.R;
 import com.example.androidmapsh.database.Location;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapter.ViewHolder> {
-    private final LiveData<List<Location>> bookmarkList;
+    public static final String TAG = BookmarkListAdapter.class.getName();
+    private final List<Location> bookmarkList;
     private final Context context;
     private final OnItemClickListener listener;
     private final Spannable.Factory spannableFactory;
 
-    public BookmarkListAdapter(Context context, OnItemClickListener listener, LiveData<List<Location>> bookmarks) {
+    public BookmarkListAdapter(Context context, OnItemClickListener listener) {
         this.context = context;
         this.listener = listener;
-        this.bookmarkList = bookmarks;
+        this.bookmarkList = new ArrayList<>();
 
         spannableFactory = new Spannable.Factory() {
             @Override
@@ -55,7 +58,7 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Location location = bookmarkList.getValue().get(position);
+        Location location = bookmarkList.get(position);
 
         holder.name.setText(location.getName());
         DecimalFormat df = new DecimalFormat();
@@ -74,7 +77,7 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
 
     @Override
     public int getItemCount() {
-        return bookmarkList.getValue().size();
+        return bookmarkList.size();
     }
 
 
@@ -100,5 +103,17 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
 
     public interface OnItemClickListener {
         void onItemClick(String symbol);
+    }
+
+    public void deleteFromList(Location location){
+        bookmarkList.remove(location);
+        notifyDataSetChanged();
+    }
+
+    public void setBookmarkList(List<Location> locations){
+        Log.d(TAG, "setBookmarkList: inserting data to recycler view " );
+        bookmarkList.clear();
+        bookmarkList.addAll(locations);
+        notifyDataSetChanged();
     }
 }

@@ -1,22 +1,26 @@
 package com.example.androidmapsh.database;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.example.androidmapsh.MainActivity;
+import com.example.androidmapsh.ui.map.MapFragment;
 
+import java.net.ContentHandler;
 import java.util.List;
 
 import static androidx.room.OnConflictStrategy.REPLACE;
 
 public class DatabaseManager {
+    public static final String TAG = DatabaseManager.class.getName();
 
-
-    private static RoomDB database = RoomDB.getDatabase();
+    private static RoomDB database;
     private static DatabaseManager databaseManager = null;
 
     public Runnable loadLocationList( Handler handler) {
@@ -25,7 +29,8 @@ public class DatabaseManager {
             Message message = new Message();
             message.what = MainActivity.DB_LOCATION_LOAD;
             message.arg1 = 1;
-            message.obj = locationDataList;
+            Location[] locations = new Location[locationDataList.size()];
+            message.obj = locationDataList.toArray(locations);
             handler.sendMessage(message);
         };
     }
@@ -60,6 +65,8 @@ public class DatabaseManager {
     }
 
     private List<Location> loadLocations(){
+        Log.d(TAG, "loadLocations: database:" + database);
+        Log.d(TAG, "loadLocations: dao:" + database.mainDao());
         return database.mainDao().getAll();
     }
 
@@ -67,6 +74,12 @@ public class DatabaseManager {
         if(databaseManager == null){
             databaseManager = new DatabaseManager();
         }
+        return databaseManager;
+    }
+
+    public static DatabaseManager initDatabaseManager(Context context){
+        databaseManager = new DatabaseManager();
+        database = RoomDB.getInstance(context);
         return databaseManager;
     }
 }

@@ -15,15 +15,12 @@ import java.util.List;
 public class Location implements Serializable {
     private static List<Location> locations;
 
-//    //Create id column
-//    @PrimaryKey(autoGenerate = true)
-//    private final int ID;
-//    //TODO: setter?
+    //Create id column
+    @PrimaryKey(autoGenerate = true)
+    public int ID;
 
     //Create name column
-    @PrimaryKey
     @ColumnInfo(name = "name")
-    @NotNull
     private final String name;
 
     //Create latitude column
@@ -34,15 +31,15 @@ public class Location implements Serializable {
     @ColumnInfo(name = "longitude")
     private final float longitude;
 
-    public Location(@NotNull String name, float latitude, float longitude) {
+    public Location(String name, float latitude, float longitude) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-//    public int getID() {
-//        return ID;
-//    }
+    public int getID() {
+        return ID;
+    }
 
     public String getName() {
         return name;
@@ -56,27 +53,27 @@ public class Location implements Serializable {
         return longitude;
     }
 
-//    public void addLocation(Location location){
-//        locations.add(location);
-//    }
-//
-//    private Location getLocationById(int id){
-//        for (Location location : locations) {
-//            if(location.getID() == id)
-//                return location;
-//        }
-//        return null;
-//    }
-//
-//    private int getNumberOfLocations(){
-//        return locations.size();
-//    }
-//
-//    private List<Location> getAllLocations(){
-//        return locations;
-//    }
-//
-//    private void updateLocations(List<Location> locationList){
-//        locations = locationList;
-//    }
+    public void addLocation(Location location){
+        locations.add(location);
+    }
+
+    private Location getLocationById(int id){
+        for (Location location : locations) {
+            if(location.getID() == id)
+                return location;
+        }
+        return null;
+    }
+
+    private int getNumberOfLocations(){
+        return locations.size();
+    }
+
+    private List<Location> getAllLocations(){
+        return locations;
+    }
+
+    private void updateLocations(List<Location> locationList){
+        locations = locationList;
+    }
 }

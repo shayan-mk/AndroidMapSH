@@ -16,17 +16,12 @@ import java.util.stream.Collectors;
 
 public class BookmarksViewModel extends ViewModel {
 
-    private MutableLiveData<List<Location>> bookmarks;
+    private BookmarkListAdapter bla;
     private List<Location> cacheBookmarks;
 
     public BookmarksViewModel() {
-        bookmarks = new MutableLiveData<>();
-        bookmarks.setValue(new ArrayList<>());
     }
 
-    public LiveData<List<Location>> getBookmarks() {
-        return bookmarks;
-    }
 
     public void setBookmarks(Location[] bookmarks) {
         cacheBookmarks = Arrays.asList(bookmarks);
@@ -41,14 +36,20 @@ public class BookmarksViewModel extends ViewModel {
     public void filterBookmarks(String text){
         List<Location> filteredList = new ArrayList<>();
         for (Location bookmark : cacheBookmarks) {
-            if(bookmark.getName().startsWith(text)){
+            if(bookmark.getName().toLowerCase().contains(text.toLowerCase())){
                 filteredList.add(bookmark);
             }
         }
-        bookmarks.setValue(filteredList);
+        bla.setBookmarkList(filteredList);
     }
 
     private void readFromCache(){
-        bookmarks.setValue(cacheBookmarks);
+
+        //TODO: bla is null
+        bla.setBookmarkList(cacheBookmarks);
+    }
+
+    public void setBla(BookmarkListAdapter bla) {
+        this.bla = bla;
     }
 }

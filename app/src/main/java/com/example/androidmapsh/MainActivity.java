@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.example.androidmapsh.database.DatabaseManager;
 import com.example.androidmapsh.database.Location;
 import com.example.androidmapsh.ui.bookmarks.BookmarksViewModel;
 import com.example.androidmapsh.ui.map.MapViewModel;
@@ -53,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
         threadPool = Executors.newFixedThreadPool(5);
         MAPBOX_API_KEY = getString(R.string.access_token);
         handler = new Handler(getMainLooper());
+
+        DatabaseManager.initDatabaseManager(this);
+
         bookmarksVM = new ViewModelProvider(MainActivity.this).get(BookmarksViewModel.class);
         mapVM = new ViewModelProvider(MainActivity.this).get(MapViewModel.class);
 
@@ -72,7 +76,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "handleMessage: " + msg.what);
                 switch (msg.what) {
                     case DB_LOCATION_LOAD:
-                        bookmarksVM.setBookmarks((Location[]) msg.obj);
+                        Log.d(TAG, "handleMessage: " + msg.obj.getClass());
+                        //bookmarksVM.setBookmarks((Location[]) msg.obj);
                         break;
                     case DB_LOCATION_INSERT:
                         // TODO
