@@ -1,18 +1,13 @@
 package com.example.androidmapsh.ui.bookmarks;
 
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -22,13 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.androidmapsh.MainActivity;
 import com.example.androidmapsh.R;
 import com.example.androidmapsh.database.DatabaseManager;
-import com.example.androidmapsh.database.Location;
-import com.example.androidmapsh.map.NetworkManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class BookmarksFragment extends Fragment implements BookmarkListAdaptor.OnItemClickListener{
+public class BookmarksFragment extends Fragment implements BookmarkListAdapter.OnItemClickListener{
 
     BookmarksViewModel bookmarksViewModel;
     MainActivity mainActivity;
@@ -52,8 +42,8 @@ public class BookmarksFragment extends Fragment implements BookmarkListAdaptor.O
         mainActivity.execute(DatabaseManager.getInstance()
                 .loadLocationList(mainActivity.getHandler()));
 
-        BookmarkListAdaptor bookmarkListAdaptor = new BookmarkListAdaptor(getActivity(), this, bookmarksViewModel.getBookmarks());
-        listView.setAdapter(bookmarkListAdaptor);
+        BookmarkListAdapter bookmarkListAdapter = new BookmarkListAdapter(getActivity(), this, bookmarksViewModel.getBookmarks());
+        listView.setAdapter(bookmarkListAdapter);
 
 
         editText.addTextChangedListener(new TextWatcher() {

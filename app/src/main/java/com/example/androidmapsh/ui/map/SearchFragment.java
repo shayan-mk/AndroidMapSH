@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchFragment extends Fragment {
-    List<String> recommendations;
+
+    MainActivity mainActivity;
+    MapViewModel mapViewModel;
 
 
     public View onCreate(@NonNull LayoutInflater inflater,

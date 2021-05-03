@@ -1,10 +1,8 @@
 package com.example.androidmapsh.ui.bookmarks;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,16 +16,15 @@ import com.example.androidmapsh.R;
 import com.example.androidmapsh.database.Location;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-public class BookmarkListAdaptor extends RecyclerView.Adapter<BookmarkListAdaptor.ViewHolder> {
+public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapter.ViewHolder> {
     private final LiveData<List<Location>> bookmarkList;
     private final Context context;
     private final OnItemClickListener listener;
     private final Spannable.Factory spannableFactory;
 
-    public BookmarkListAdaptor(Context context, OnItemClickListener listener, LiveData<List<Location>> bookmarks) {
+    public BookmarkListAdapter(Context context, OnItemClickListener listener, LiveData<List<Location>> bookmarks) {
         this.context = context;
         this.listener = listener;
         this.bookmarkList = bookmarks;
@@ -47,7 +44,7 @@ public class BookmarkListAdaptor extends RecyclerView.Adapter<BookmarkListAdapto
 
         // Inflate the custom layout
         View cryptoView = inflater.inflate(R.layout.bookmark_item, parent, false);
-        BookmarkListAdaptor.ViewHolder viewHolder = new ViewHolder(cryptoView);
+        BookmarkListAdapter.ViewHolder viewHolder = new ViewHolder(cryptoView);
 
         viewHolder.name.setSpannableFactory(spannableFactory);
         viewHolder.latitude.setSpannableFactory(spannableFactory);
