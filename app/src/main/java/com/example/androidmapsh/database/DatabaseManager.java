@@ -51,15 +51,15 @@ public class DatabaseManager {
         };
     }
 
-    public synchronized void insertLocation(Location location){
+    private synchronized void insertLocation(Location location){
         database.mainDao().insert(location);
     }
 
-    public synchronized void deleteLocation(Location location){
+    private synchronized void deleteLocation(Location location){
         database.mainDao().delete(location);
     }
 
-    public List<Location> loadLocations(){
+    private List<Location> loadLocations(){
         return database.mainDao().getAll();
     }
 

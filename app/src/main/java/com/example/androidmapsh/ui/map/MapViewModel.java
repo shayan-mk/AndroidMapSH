@@ -12,6 +12,7 @@ import java.util.List;
 public class MapViewModel extends ViewModel {
 
     private MutableLiveData<List<Location>> recommendations;
+    private SaveLocationDialog saveLocationDialog;
 
     public MapViewModel() {
         recommendations = new MutableLiveData<List<Location>>();
@@ -23,5 +24,9 @@ public class MapViewModel extends ViewModel {
 
     public void updateRecommendations(String text){
 
+    }
+
+    public SaveLocationDialog getSaveLocationDialog() {
+        return saveLocationDialog;
     }
 }
