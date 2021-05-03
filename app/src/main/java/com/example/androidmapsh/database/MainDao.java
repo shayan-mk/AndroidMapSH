@@ -24,9 +24,9 @@ public interface MainDao {
     @Delete
     void reset(List<Location> locations);
 
-    //Update query
-    @Query("UPDATE Location SET name = :sName WHERE ID = :sID")
-    void update(int sID, String sName);
+//    //Update query
+//    @Query("UPDATE Location SET name = :sName WHERE ID = :sID")
+//    void update(int sID, String sName);
 
     //Get all data query
     @Query("SELECT * FROM Location")
