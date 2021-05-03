@@ -29,4 +29,11 @@ public class MapViewModel extends ViewModel {
     public SaveLocationDialog getSaveLocationDialog() {
         return saveLocationDialog;
     }
+
+    public void dismissSaveLocationDialog(){
+        if(saveLocationDialog != null){
+            saveLocationDialog.dismissDialog();
+            saveLocationDialog = null;
+        }
+    }
 }
