@@ -15,22 +15,30 @@ import java.util.List;
 public class MapViewModel extends ViewModel {
 
     private static final String TAG = MapViewModel.class.getName();
-    private MutableLiveData<List<Location>> recommendations;
+//    private MutableLiveData<List<Location>> recommendations;
     private SaveLocationDialog saveLocationDialog;
+    private RecommendationListAdapter rla;
 
     public MapViewModel() {
-        recommendations = new MutableLiveData<>();
-        recommendations.setValue(new ArrayList<>());
+//        recommendations = new MutableLiveData<>();
+//        recommendations.setValue(new ArrayList<>());
     }
 
-    public LiveData<List<Location>> getRecommendation(){
-        return recommendations;
+//    public LiveData<List<Location>> getRecommendation(){
+//        return recommendations;
+//    }
+
+
+    public void setRla(RecommendationListAdapter rla) {
+        this.rla = rla;
     }
 
     public void updateRecommendations(Location[] results){
 //        Log.d(TAG, "updateRecommendations: " + results);
-        recommendations.setValue(Arrays.asList(results));
+//        recommendations.getValue().clear();
+//        recommendations.getValue().addAll(Arrays.asList(results));
 //        Log.d(TAG, "updateRecommendations: " + recommendations.getValue().get(0).getName());
+        rla.loadRecommendations(Arrays.asList(results));
 
     }
 

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -52,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
         threadPool = Executors.newFixedThreadPool(5);
         MAPBOX_API_KEY = getString(R.string.access_token);
         handler = new Handler(getMainLooper());
-        bookmarksVM = new ViewModelProvider(this).get(BookmarksViewModel.class);
-        mapVM = new ViewModelProvider(this).get(MapViewModel.class);
+        bookmarksVM = new ViewModelProvider(MainActivity.this).get(BookmarksViewModel.class);
+        mapVM = new ViewModelProvider(MainActivity.this).get(MapViewModel.class);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -69,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 Log.d(TAG, "handleMessage: " + msg.what);
-
                 switch (msg.what) {
                     case DB_LOCATION_LOAD:
                         bookmarksVM.setBookmarks((Location[]) msg.obj);
@@ -96,4 +96,11 @@ public class MainActivity extends AppCompatActivity {
         return handler;
     }
 
+    public BookmarksViewModel getBookmarksVM() {
+        return bookmarksVM;
+    }
+
+    public MapViewModel getMapVM() {
+        return mapVM;
+    }
 }

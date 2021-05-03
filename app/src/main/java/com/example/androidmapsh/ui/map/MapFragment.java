@@ -14,12 +14,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidmapsh.MainActivity;
 import com.example.androidmapsh.R;
+import com.example.androidmapsh.database.Location;
 import com.example.androidmapsh.map.NetworkManager;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
@@ -53,7 +55,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
         mainActivity = (MainActivity) getActivity();
         Mapbox.getInstance(mainActivity, getString(R.string.access_token));
-        mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
+        mapViewModel = mainActivity.getMapVM();
         View root = inflater.inflate(R.layout.fragment_map, container, false);
 
         mapView = root.findViewById(R.id.mapView);
@@ -67,10 +69,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         Button micButton = root.findViewById(R.id.button);
         RecyclerView rcView = root.findViewById(R.id.list_view);
 
-        RecommendationListAdapter recommendationListAdapter = new RecommendationListAdapter(
-                mainActivity, this, mapViewModel.getRecommendation());
+        RecommendationListAdapter recommendationListAdapter = new RecommendationListAdapter(mainActivity, this);
         rcView.setAdapter(recommendationListAdapter);
         rcView.setLayoutManager(new LinearLayoutManager(mainActivity));
+        mapViewModel.setRla(recommendationListAdapter);
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override

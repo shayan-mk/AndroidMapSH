@@ -4,31 +4,37 @@ package com.example.androidmapsh.ui.map;
 import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.androidmapsh.MainActivity;
 import com.example.androidmapsh.R;
 import com.example.androidmapsh.database.Location;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
-public class RecommendationListAdapter extends RecyclerView.Adapter<com.example.androidmapsh.ui.map.RecommendationListAdapter.ViewHolder> {
-    private final LiveData<List<Location>> recommendationList;
+public class RecommendationListAdapter extends RecyclerView.Adapter<RecommendationListAdapter.ViewHolder> {
+    private static final String TAG = RecommendationListAdapter.class.getName();
+    private final List<Location> recommendationList;
     private final Context context;
-    private final com.example.androidmapsh.ui.map.RecommendationListAdapter.OnItemClickListener listener;
+    private final OnItemClickListener listener;
     private final Spannable.Factory spannableFactory;
 
-    public RecommendationListAdapter(Context context, com.example.androidmapsh.ui.map.RecommendationListAdapter.OnItemClickListener listener, LiveData<List<Location>> recommendationList) {
+    public RecommendationListAdapter(Context context, OnItemClickListener listener) {
         this.context = context;
         this.listener = listener;
-        this.recommendationList = recommendationList;
+        recommendationList = new ArrayList<>();
 
         spannableFactory = new Spannable.Factory() {
             @Override
@@ -38,44 +44,52 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<com.example.
         };
     }
 
+    public void loadRecommendations(List<Location> newData) {
+        recommendationList.clear();
+        recommendationList.addAll(newData);
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
-    public com.example.androidmapsh.ui.map.RecommendationListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom layout
-        View cryptoView = inflater.inflate(R.layout.bookmark_item, parent, false);
-        com.example.androidmapsh.ui.map.RecommendationListAdapter.ViewHolder viewHolder = new com.example.androidmapsh.ui.map.RecommendationListAdapter.ViewHolder(cryptoView);
+        View bookmarkView = inflater.inflate(R.layout.bookmark_item, parent, false);
+        ViewHolder viewHolder = new ViewHolder(bookmarkView);
 
-        viewHolder.name.setSpannableFactory(spannableFactory);
-        viewHolder.latitude.setSpannableFactory(spannableFactory);
-        viewHolder.longitude.setSpannableFactory(spannableFactory);
+//        viewHolder.name.setSpannableFactory(spannableFactory);
+//        viewHolder.latitude.setSpannableFactory(spannableFactory);
+//        viewHolder.longitude.setSpannableFactory(spannableFactory);
         // Return a new holder instance
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull com.example.androidmapsh.ui.map.RecommendationListAdapter.ViewHolder holder, int position) {
-        Location location = recommendationList.getValue().get(position);
+        Location location = recommendationList.get(position);
 
         holder.name.setText(location.getName());
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(5);
 
-        Spannable spannable = new SpannableString(df.format(location.getLatitude()));
+//        Spannable spannable = new SpannableString(df.format(location.getLatitude()));
 //        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange1h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        holder.latitude.setText(spannable, TextView.BufferType.SPANNABLE);
+//        holder.latitude.setText(spannable, TextView.BufferType.SPANNABLE);
+        holder.latitude.setText(df.format(location.getLatitude()));
 
-        spannable = new SpannableString(df.format(location.getLongitude()));
+//        spannable = new SpannableString(df.format(location.getLongitude()));
 //        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange24h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        holder.longitude.setText(spannable, TextView.BufferType.SPANNABLE);
+//        holder.longitude.setText(spannable, TextView.BufferType.SPANNABLE);
+        holder.longitude.setText(df.format(location.getLongitude()));
 
-//        holder.itemView.setOnClickListener(view -> listener.onItemClick(location.getSymbol()));
+        holder.itemView.setOnClickListener(view -> listener.onItemClick(location.getName()));
     }
 
     @Override
     public int getItemCount() {
-        return recommendationList.getValue().size();
+        return recommendationList.size();
     }
 
     //TODO: create an item view holder for the places in the recommendation list
