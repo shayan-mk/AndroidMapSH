@@ -29,11 +29,11 @@ import com.example.androidmapsh.database.Location;
 
 public class SaveLocationDialog extends AppCompatDialogFragment {
 
-    private float latitude;
-    private float longitude;
+    private final double latitude;
+    private final double longitude;
     MainActivity mainActivity;
 
-    public SaveLocationDialog(float latitude, float longitude) {
+    public SaveLocationDialog(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -44,7 +44,7 @@ public class SaveLocationDialog extends AppCompatDialogFragment {
     @Override
     @SuppressLint("SetTextI18n")
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        mainActivity = (MainActivity) mainActivity;
+        mainActivity = (MainActivity) getActivity();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -72,12 +72,9 @@ public class SaveLocationDialog extends AppCompatDialogFragment {
 
 
         builder.setView(view);
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            if (dialog != null) {
+                dialog.dismiss();
             }
         });
 

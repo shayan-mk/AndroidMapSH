@@ -39,7 +39,6 @@ public class MapViewModel extends ViewModel {
 //        recommendations.getValue().addAll(Arrays.asList(results));
 //        Log.d(TAG, "updateRecommendations: " + recommendations.getValue().get(0).getName());
         rla.loadRecommendations(Arrays.asList(results));
-
     }
 
     public SaveLocationDialog getSaveLocationDialog() {

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,9 @@ import com.example.androidmapsh.database.Location;
 import com.example.androidmapsh.map.NetworkManager;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.android.gestures.AndroidGesturesManager;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.LocationComponentOptions;
@@ -35,6 +38,7 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.maps.UiSettings;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,12 +46,16 @@ import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, RecommendationListAdapter.OnItemClickListener {
     public static final String TAG = MapFragment.class.getName();
+    private static final long TAP_INTERVAL = 1000; // in millis
+    private static final double DISTANCE = 0.1;
 
     private MapViewModel mapViewModel;
     private MainActivity mainActivity;
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
     private MapView mapView;
+    private LatLng lastClickedPoint;
+    private long lastClickedTime;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -61,6 +69,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         mapView = root.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+        lastClickedPoint = new LatLng();
+        lastClickedTime = 0;
 
         //-------------------------------------------------------------------------------------
 
@@ -93,6 +103,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             }
         });
 
+
+
         return root;
     }
 
@@ -100,6 +112,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         MapFragment.this.mapboxMap = mapboxMap;
         mapboxMap.setStyle(Style.MAPBOX_STREETS, this::enableLocationComponent);
+        mapboxMap.addOnMapClickListener(point -> {
+            Log.d(TAG, "onMapReady: clicked!" + point.getLatitude() + point.getLongitude());
+            long now = System.currentTimeMillis();
+            if (now - lastClickedTime < TAP_INTERVAL && point.distanceTo(lastClickedPoint) < DISTANCE) {
+                //TODO drop pin
+                Log.d(TAG, "onMapReady: double click!" + point.getLatitude() + point.getLongitude());
+                new SaveLocationDialog(point.getLatitude(), point.getLongitude()).show(mainActivity.getSupportFragmentManager(), "SaveLocation");
+            }
+            lastClickedPoint = point;
+            lastClickedTime = now;
+            return true;
+        });
+
+        UiSettings uiSettings = mapboxMap.getUiSettings();
+        uiSettings.setDoubleTapGesturesEnabled(false);
     }
 
     @SuppressWarnings({"MissingPermission"})

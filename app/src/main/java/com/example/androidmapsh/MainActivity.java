@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (msg.what) {
                     case DB_LOCATION_LOAD:
                         Log.d(TAG, "handleMessage: " + msg.obj.getClass());
-                        //bookmarksVM.setBookmarks((Location[]) msg.obj);
+                        bookmarksVM.setBookmarks((Location[]) msg.obj);
                         break;
                     case DB_LOCATION_INSERT:
                         // TODO

@@ -25,13 +25,13 @@ public class Location implements Serializable {
 
     //Create latitude column
     @ColumnInfo(name = "latitude")
-    private final float latitude;
+    private final double latitude;
 
     //Create longitude column
     @ColumnInfo(name = "longitude")
-    private final float longitude;
+    private final double longitude;
 
-    public Location(String name, float latitude, float longitude) {
+    public Location(String name, double latitude, double longitude) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -45,11 +45,11 @@ public class Location implements Serializable {
         return name;
     }
 
-    public float getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 

@@ -1,0 +1,17 @@
+
+delete button bookmarks
+pin location
+
+setting delete database
+
+
+on click bookmark o recommendation (go to location)
+reset location
+
+refining bookmark and recommendation xml
+
+removing the top gap in fragments
+
+setting night mode
+search with mic
+speed (motion sensor)

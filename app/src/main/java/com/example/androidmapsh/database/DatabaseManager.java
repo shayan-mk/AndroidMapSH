@@ -16,6 +16,7 @@ import java.net.ContentHandler;
 import java.util.List;
 
 import static androidx.room.OnConflictStrategy.REPLACE;
+import static com.example.androidmapsh.ui.map.MapFragment.TAG;
 
 public class DatabaseManager {
     public static final String TAG = DatabaseManager.class.getName();
