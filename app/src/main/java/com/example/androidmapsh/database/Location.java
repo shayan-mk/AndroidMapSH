@@ -15,8 +15,8 @@ public class Location implements Serializable {
 
     //Create id column
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private int ID;
+    private final int ID;
+    //TODO: setter?
 
     //Create name column
     @ColumnInfo(name = "name")

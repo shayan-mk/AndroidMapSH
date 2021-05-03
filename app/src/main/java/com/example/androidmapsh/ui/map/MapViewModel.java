@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.androidmapsh.database.Location;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MapViewModel extends ViewModel {
@@ -15,15 +16,15 @@ public class MapViewModel extends ViewModel {
     private SaveLocationDialog saveLocationDialog;
 
     public MapViewModel() {
-        recommendations = new MutableLiveData<List<Location>>();
+        recommendations = new MutableLiveData<>();
     }
 
     public LiveData<List<Location>> getRecommendation(){
         return recommendations;
     }
 
-    public void updateRecommendations(String text){
-
+    public void updateRecommendations(Location[] results){
+        recommendations.setValue(Arrays.asList(results));
     }
 
     public SaveLocationDialog getSaveLocationDialog() {

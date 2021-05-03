@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.androidmapsh.database.Location;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ public class BookmarksViewModel extends ViewModel {
     private List<Location> cacheBookmarks;
 
     public BookmarksViewModel() {
-        bookmarks = new MutableLiveData<List<Location>>();
+        bookmarks = new MutableLiveData<>();
 
     }
 
@@ -27,12 +28,12 @@ public class BookmarksViewModel extends ViewModel {
         return bookmarks;
     }
 
-    public void setBookmarks(List<Location> bookmarks) {
-        cacheBookmarks = bookmarks;
+    public void setBookmarks(Location[] bookmarks) {
+        cacheBookmarks = Arrays.asList(bookmarks);
         readFromCache();
     }
 
-    public void deleteBookmark( Location location){
+    public void deleteBookmark(Location location){
         cacheBookmarks.remove(location);
         readFromCache();
     }
