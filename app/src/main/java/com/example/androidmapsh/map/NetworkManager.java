@@ -37,10 +37,12 @@ public class NetworkManager {
         return instance;
     }
 
+    //TODO: create a message, pass it to the handler, handle it from there by updating the recommendation list in mapViewModel
     public Runnable loadSearchResults(String name, Handler handler) {
         return () -> runLoadCrypto(name, handler);
     }
 
+    //TODO: Bro, what are you doing with crypto???
     private void runLoadCrypto(String name, Handler handler) {
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("access_token", MainActivity.MAPBOX_API_KEY);
