@@ -5,14 +5,17 @@ import android.os.Message;
 import android.util.Log;
 
 import com.example.androidmapsh.MainActivity;
-import com.example.androidmapsh.R;
 import com.example.androidmapsh.database.Location;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -21,11 +24,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import java.util.List;
-
 public class NetworkManager {
     private static NetworkManager instance = null;
     private static final String TAG = "NetworkManager";
+    private static final String API_URL = "https://api.mapbox.com/geocoding/v5/mapbox.places/";
 
     private NetworkManager() {
     }
@@ -37,17 +39,15 @@ public class NetworkManager {
         return instance;
     }
 
-    //TODO: create a message, pass it to the handler, handle it from there by updating the recommendation list in mapViewModel
     public Runnable loadSearchResults(String name, Handler handler) {
-        return () -> runLoadCrypto(name, handler);
+        return () -> runLoadSearchResults(name, handler);
     }
 
-    //TODO: Bro, what are you doing with crypto???
-    private void runLoadCrypto(String name, Handler handler) {
+    private void runLoadSearchResults(String name, Handler handler) {
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("access_token", MainActivity.MAPBOX_API_KEY);
-        String rawUrl = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + name + ".json";
-        String url = buildURL(rawUrl, parameters);
+        String correctedName = name.replaceAll(" ", "%20") + ".json";
+        String url = buildURL(API_URL + correctedName, parameters);
 
         final Request request = new Request.Builder().url(url).build();
 
@@ -69,18 +69,12 @@ public class NetworkManager {
                     handler.sendMessage(message);
                     throw new IOException("Unexpected code " + response);
                 } else {
-                    String responseString = response.body().string();
-                    Log.d(TAG, "onResponse: " + responseString);
-                    JsonObject obj = JsonParser.parseString(responseString).getAsJsonObject();
-                    Log.d(TAG, "onResponse: " + obj.get("data").toString());
-                    Log.d(TAG, "onResponse: " + obj.toString());
-                    String dataJson = obj.get("data").toString();
-                    Gson gson = new Gson();
-                    Location[] cryptoData = gson.fromJson(dataJson, Location[].class);
+                    String responseJson = response.body().string();
+                    Location[] locations = parseResponse(responseJson);
                     Message message = new Message();
                     message.what = MainActivity.NET_SEARCH_RESULT;
                     message.arg1 = 1;
-                    message.obj = cryptoData;
+                    message.obj = locations;
                     handler.sendMessage(message);
                 }
             }
@@ -100,9 +94,23 @@ public class NetworkManager {
 
     }
 
-    //TODO
-    public static List<String> getRecommendations(String text){
-        return null;
+    private Location[] parseResponse (String json) {
+        List<Location> locations = new ArrayList<>();
+        JsonObject root = JsonParser.parseString(json).getAsJsonObject();
+        JsonArray locationsArray = root.getAsJsonArray("features");
+        for (JsonElement element : locationsArray) {
+            JsonObject object = element.getAsJsonObject();
+            String name = object.get("place_name").getAsString();
+            JsonArray coordinates = object.getAsJsonArray("center");
+            float longitude = coordinates.get(0).getAsFloat();
+            float latitude = coordinates.get(1).getAsFloat();
+            locations.add(new Location(name, latitude, longitude));
+        }
+
+        Location[] result = new Location[locations.size()];
+        locations.toArray(result);
+        return result;
+
     }
 }
 

@@ -63,7 +63,8 @@ public class SearchFragment extends Fragment implements RecommendationListAdapte
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                NetworkManager.getInstance().loadSearchResults(s.toString(), mainActivity.getHandler());
+                mainActivity.execute(NetworkManager.getInstance()
+                        .loadSearchResults(s.toString(), mainActivity.getHandler()));
             }
 
             @Override

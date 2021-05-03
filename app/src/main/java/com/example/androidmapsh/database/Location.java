@@ -30,8 +30,8 @@ public class Location implements Serializable {
     @ColumnInfo(name = "longitude")
     private final float longitude;
 
-    public Location(int ID, String name, float latitude, float longitude) {
-        this.ID = ID;
+    public Location(String name, float latitude, float longitude) {
+        this.ID = 0;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
