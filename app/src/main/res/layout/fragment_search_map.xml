@@ -33,7 +33,6 @@
             android:id="@+id/divider"
             android:layout_width="0dp"
             app:backgroundTint="@color/white"
-            android:alpha="0%"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?android:attr/listDivider" />

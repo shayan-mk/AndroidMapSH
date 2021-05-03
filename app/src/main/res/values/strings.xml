@@ -7,6 +7,5 @@
     <string name="access_token">pk.eyJ1Ijoic2hheWFubWsiLCJhIjoiY2tueDVveGswMTNmYjJ4bWtsZ2l3Ym5rYyJ9.DjUcY30GG4v0FQs9UpoZ9w</string>
     <string name="user_location_permission_explanation">error!</string>
     <string name="user_location_permission_not_granted">error!</string>
-    <string name="search">Search...</string>
-    <string name="search">Search...</string>
+    <string name="search">Search…</string>
 </resources>
