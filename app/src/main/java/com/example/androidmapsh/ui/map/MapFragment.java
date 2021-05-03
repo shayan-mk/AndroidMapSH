@@ -1,16 +1,26 @@
 package com.example.androidmapsh.ui.map;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.androidmapsh.MainActivity;
 import com.example.androidmapsh.R;
+import com.example.androidmapsh.map.NetworkManager;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -28,9 +38,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, PermissionsListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, RecommendationListAdapter.OnItemClickListener {
+    public static final String TAG = MapFragment.class.getName();
 
     private MapViewModel mapViewModel;
+    private MainActivity mainActivity;
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
     private MapView mapView;
@@ -39,13 +51,46 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Mapbox.getInstance(getActivity(), getString(R.string.access_token));
-
+        mainActivity = (MainActivity) getActivity();
+        Mapbox.getInstance(mainActivity, getString(R.string.access_token));
         mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
         View root = inflater.inflate(R.layout.fragment_map, container, false);
-        mapView = (MapView) root.findViewById(R.id.mapView);
+
+        mapView = root.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        //-------------------------------------------------------------------------------------
+
+        EditText editText = root.findViewById(R.id.edit_text);
+        //TODO: search using voice
+        Button micButton = root.findViewById(R.id.button);
+        RecyclerView rcView = root.findViewById(R.id.list_view);
+
+        RecommendationListAdapter recommendationListAdapter = new RecommendationListAdapter(
+                mainActivity, this, mapViewModel.getRecommendation());
+        rcView.setAdapter(recommendationListAdapter);
+        rcView.setLayoutManager(new LinearLayoutManager(mainActivity));
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d(TAG, "onTextChanged: " + s);
+                mainActivity.execute(NetworkManager.getInstance()
+                        .loadSearchResults(s.toString(), mainActivity.getHandler()));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "afterTextChanged: " + s);
+            }
+        });
+
         return root;
     }
 
@@ -58,11 +103,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     @SuppressWarnings({"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
         // Check if permissions are enabled and if not request
-        if (PermissionsManager.areLocationPermissionsGranted(getActivity())) {
+        if (PermissionsManager.areLocationPermissionsGranted(mainActivity)) {
 
         // Enable the most basic pulsing styling by ONLY using
         // the `.pulseEnabled()` method
-            LocationComponentOptions customLocationComponentOptions = LocationComponentOptions.builder(getActivity())
+            LocationComponentOptions customLocationComponentOptions = LocationComponentOptions.builder(mainActivity)
                     .pulseEnabled(true)
                     .build();
 
@@ -71,7 +116,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
             // Activate with options
             locationComponent.activateLocationComponent(
-                    LocationComponentActivationOptions.builder(getActivity(), loadedMapStyle)
+                    LocationComponentActivationOptions.builder(mainActivity, loadedMapStyle)
                             .locationComponentOptions(customLocationComponentOptions)
                             .build());
 
@@ -85,7 +130,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             locationComponent.setRenderMode(RenderMode.NORMAL);
         } else {
             permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(getActivity());
+            permissionsManager.requestLocationPermissions(mainActivity);
         }
     }
 
@@ -96,7 +141,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
-        Toast.makeText(getActivity(), R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
+        Toast.makeText(mainActivity, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -104,8 +149,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         if (granted) {
             mapboxMap.getStyle(this::enableLocationComponent);
         } else {
-            Toast.makeText(getActivity(), R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
-            getActivity().finish();
+            Toast.makeText(mainActivity, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
+            mainActivity.finish();
         }
     }
 
@@ -150,6 +195,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onItemClick(String symbol) {
+
     }
 }
 

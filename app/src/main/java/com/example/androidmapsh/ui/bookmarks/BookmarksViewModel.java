@@ -21,7 +21,7 @@ public class BookmarksViewModel extends ViewModel {
 
     public BookmarksViewModel() {
         bookmarks = new MutableLiveData<>();
-
+        bookmarks.setValue(new ArrayList<>());
     }
 
     public LiveData<List<Location>> getBookmarks() {
