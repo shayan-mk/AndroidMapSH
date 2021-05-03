@@ -15,8 +15,8 @@ public class Location implements Serializable {
 
     //Create id column
     @PrimaryKey(autoGenerate = true)
-    private final int ID;
-    //TODO: setter?
+    @ColumnInfo(name = "id")
+    private int ID;
 
     //Create name column
     @ColumnInfo(name = "name")
@@ -30,8 +30,7 @@ public class Location implements Serializable {
     @ColumnInfo(name = "longitude")
     private final float longitude;
 
-    public Location(int ID, String name, float latitude, float longitude) {
-        this.ID = ID;
+    public Location(String name, float latitude, float longitude) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
