@@ -62,6 +62,8 @@ public class DatabaseManager {
             truncateTable();
             Message message = new Message();
             message.what = MainActivity.DB_LOCATION_TRUNCATE;
+            message.arg1 = 1;
+            handler.sendMessage(message);
         };
     }
 

@@ -10,4 +10,6 @@
     <string name="search">Search…</string>
     <string name="dark_mode">Dark Mode</string>
     <string name="delete_data">Delete Data</string>
+    <string name="off">OFF</string>
+    <string name="on">ON</string>
 </resources>

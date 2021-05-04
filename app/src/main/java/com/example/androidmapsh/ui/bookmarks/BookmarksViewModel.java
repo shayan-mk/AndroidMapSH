@@ -33,6 +33,11 @@ public class BookmarksViewModel extends ViewModel {
         readFromCache();
     }
 
+    public void truncateCache(){
+        cacheBookmarks = new ArrayList<>();
+        readFromCache();
+    }
+
     public void filterBookmarks(String text){
         List<Location> filteredList = new ArrayList<>();
         for (Location bookmark : cacheBookmarks) {

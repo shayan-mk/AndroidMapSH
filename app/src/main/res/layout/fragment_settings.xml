@@ -14,6 +14,9 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/dark_mode"
+        android:checked="true"
+        android:textOff="@string/off"
+        android:textOn="@string/on"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     <View
