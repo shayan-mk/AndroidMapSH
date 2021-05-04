@@ -133,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences appSettingsPref = getSharedPreferences("AppSettingsPrefs", 0);
         settingsVM.setSharedPreferences(appSettingsPref);
 
-        SharedPreferences.Editor editor = appSettingsPref.edit();
         Boolean isNightMode = appSettingsPref.getBoolean("NightMode", false);
 
         if(isNightMode){

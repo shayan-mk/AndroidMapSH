@@ -73,7 +73,7 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<Recommendati
         Location location = recommendationList.get(position);
 
         holder.name.setText(location.getName());
-        holder.name.setTextSize(30);
+        holder.name.setTextSize(20);
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(5);
 
