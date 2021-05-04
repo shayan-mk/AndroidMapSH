@@ -21,8 +21,8 @@ public interface MainDao {
     void delete(Location location);
 
     //Delete all queries
-    @Delete
-    void reset(List<Location> locations);
+    @Query("DELETE FROM Location")
+    void deleteAll();
 
 //    //Update query
 //    @Query("UPDATE Location SET name = :sName WHERE ID = :sID")

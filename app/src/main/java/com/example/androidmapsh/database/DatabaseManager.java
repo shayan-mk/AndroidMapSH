@@ -57,12 +57,24 @@ public class DatabaseManager {
         };
     }
 
+    public Runnable truncateTable(Handler handler){
+        return () -> {
+            truncateTable();
+            Message message = new Message();
+            message.what = MainActivity.DB_LOCATION_TRUNCATE;
+        };
+    }
+
     private synchronized void insertLocation(Location location){
         database.mainDao().insert(location);
     }
 
     private synchronized void deleteLocation(Location location){
         database.mainDao().delete(location);
+    }
+
+    private synchronized void truncateTable(){
+        database.mainDao().deleteAll();
     }
 
     private List<Location> loadLocations(){

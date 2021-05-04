@@ -12,6 +12,7 @@ import com.example.androidmapsh.database.DatabaseManager;
 import com.example.androidmapsh.database.Location;
 import com.example.androidmapsh.ui.bookmarks.BookmarksViewModel;
 import com.example.androidmapsh.ui.map.MapViewModel;
+import com.example.androidmapsh.ui.settings.SettingsViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mapbox.mapboxsdk.Mapbox;
 
@@ -34,16 +35,24 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getName();
+
     private ExecutorService threadPool;
     private Handler handler;
+
+    //View Models
     private BookmarksViewModel bookmarksVM;
     private MapViewModel mapVM;
+    private SettingsViewModel settingsVM;
 
+    //Defining Message Codes
     private static final int BASE_MESSAGE_CODE = 1000;
     public static final int DB_LOCATION_LOAD = BASE_MESSAGE_CODE + 1;
     public static final int DB_LOCATION_INSERT = BASE_MESSAGE_CODE + 2;
     public static final int DB_LOCATION_DELETE = BASE_MESSAGE_CODE + 3;
     public static final int NET_SEARCH_RESULT = BASE_MESSAGE_CODE + 4;
+    public static final int DB_LOCATION_TRUNCATE = BASE_MESSAGE_CODE + 5;
+
+    //Defining MapBox API Key
     public static String MAPBOX_API_KEY = "";
 
 
@@ -107,5 +116,9 @@ public class MainActivity extends AppCompatActivity {
 
     public MapViewModel getMapVM() {
         return mapVM;
+    }
+
+    public SettingsViewModel getSettingsVM(){
+        return settingsVM;
     }
 }

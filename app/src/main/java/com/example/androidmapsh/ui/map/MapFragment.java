@@ -62,8 +62,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
                              Bundle savedInstanceState) {
 
         mainActivity = (MainActivity) getActivity();
-        Mapbox.getInstance(mainActivity, getString(R.string.access_token));
         mapViewModel = mainActivity.getMapVM();
+        Mapbox.getInstance(mainActivity, getString(R.string.access_token));
         View root = inflater.inflate(R.layout.fragment_map, container, false);
 
         mapView = root.findViewById(R.id.mapView);

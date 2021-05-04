@@ -44,8 +44,6 @@ public class BookmarksViewModel extends ViewModel {
     }
 
     private void readFromCache(){
-
-        //TODO: bla is null
         bla.setBookmarkList(cacheBookmarks);
     }
 
