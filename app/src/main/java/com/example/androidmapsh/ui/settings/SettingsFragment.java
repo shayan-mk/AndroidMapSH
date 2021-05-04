@@ -37,11 +37,12 @@ public class SettingsFragment extends Fragment {
         Button truncateButton = (Button) root.findViewById(R.id.truncate_button);
         //Setting listeners of truncate buttons
         truncateButton.setOnClickListener(view1 -> {
-            mainActivity.execute(DatabaseManager.);
 
+            //Pass the truncate action to the handler
+            mainActivity.execute(DatabaseManager.getInstance().
+                    truncateTable(mainActivity.getHandler()));
 
         });
-
 
         return root;
     }
