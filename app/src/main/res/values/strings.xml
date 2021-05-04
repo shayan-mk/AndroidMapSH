@@ -12,4 +12,5 @@
     <string name="delete_data">Delete Data</string>
     <string name="off">OFF</string>
     <string name="on">ON</string>
+    <string name="delete">Delete</string>
 </resources>

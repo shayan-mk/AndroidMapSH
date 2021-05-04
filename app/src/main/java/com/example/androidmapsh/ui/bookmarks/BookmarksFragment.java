@@ -48,7 +48,7 @@ public class BookmarksFragment extends Fragment implements BookmarkListAdapter.O
         final RecyclerView listView = root.findViewById(R.id.list_view_bookmarks);
 
 
-        BookmarkListAdapter bookmarkListAdapter = new BookmarkListAdapter(getActivity(), this);
+        BookmarkListAdapter bookmarkListAdapter = new BookmarkListAdapter(getActivity(), this, mainActivity);
         listView.setAdapter(bookmarkListAdapter);
         listView.setLayoutManager(new LinearLayoutManager(mainActivity));
         bookmarksViewModel.setBla(bookmarkListAdapter);

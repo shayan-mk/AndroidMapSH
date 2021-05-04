@@ -96,10 +96,10 @@ public class MainActivity extends AppCompatActivity {
                         // TODO
                         break;
                     case DB_LOCATION_DELETE:
-                        bookmarksVM.truncateCache();
+                        bookmarksVM.deleteBookmark((Location)msg.obj);
                         break;
                     case DB_LOCATION_TRUNCATE:
-                        bookmarksVM.deleteBookmark((Location)msg.obj);
+                        bookmarksVM.truncateCache();
                         break;
                     case NET_SEARCH_RESULT:
                         mapVM.updateRecommendations((Location[])msg.obj);

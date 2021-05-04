@@ -1,6 +1,7 @@
 package com.example.androidmapsh.ui.bookmarks;
 
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
@@ -8,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.androidmapsh.database.Location;
+import com.example.androidmapsh.ui.map.MapFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,25 +17,30 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BookmarksViewModel extends ViewModel {
-
+    public static final String TAG = BookmarksViewModel.class.getName();
     private BookmarkListAdapter bla;
-    private List<Location> cacheBookmarks;
+    private ArrayList<Location> cacheBookmarks;
 
     public BookmarksViewModel() {
     }
 
 
     public void setBookmarks(Location[] bookmarks) {
-        cacheBookmarks = Arrays.asList(bookmarks);
+        Log.d(TAG, "setBookmarks: " + cacheBookmarks);
+        cacheBookmarks = new ArrayList<>(Arrays.asList(bookmarks));
         readFromCache();
     }
 
     public void deleteBookmark(Location location){
+        Log.d(TAG, "deleteBookmark: Location ID:" + location.getID());
         cacheBookmarks.remove(location);
+        //cacheBookmarks.remove(location);
+        Log.d(TAG, "deleteBookmark: " + cacheBookmarks);
         readFromCache();
     }
 
     public void truncateCache(){
+        Log.d(TAG, "truncateCache: " + cacheBookmarks);
         cacheBookmarks = new ArrayList<>();
         readFromCache();
     }

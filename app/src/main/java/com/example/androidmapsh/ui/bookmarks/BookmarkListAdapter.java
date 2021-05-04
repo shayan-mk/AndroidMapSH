@@ -7,13 +7,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.androidmapsh.MainActivity;
 import com.example.androidmapsh.R;
+import com.example.androidmapsh.database.DatabaseManager;
 import com.example.androidmapsh.database.Location;
 
 import java.text.DecimalFormat;
@@ -26,11 +29,13 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
     private final Context context;
     private final OnItemClickListener listener;
     private final Spannable.Factory spannableFactory;
+    private MainActivity mainActivity;
 
-    public BookmarkListAdapter(Context context, OnItemClickListener listener) {
+    public BookmarkListAdapter(Context context, OnItemClickListener listener, MainActivity mainActivity) {
         this.context = context;
         this.listener = listener;
         this.bookmarkList = new ArrayList<>();
+        this.mainActivity = mainActivity;
 
         spannableFactory = new Spannable.Factory() {
             @Override
@@ -52,6 +57,7 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
         viewHolder.name.setSpannableFactory(spannableFactory);
         viewHolder.latitude.setSpannableFactory(spannableFactory);
         viewHolder.longitude.setSpannableFactory(spannableFactory);
+        viewHolder.delete_button.setSpannableFactory(spannableFactory);
         // Return a new holder instance
         return viewHolder;
     }
@@ -72,6 +78,10 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
 //        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange24h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         holder.longitude.setText(spannable, TextView.BufferType.SPANNABLE);
 
+        holder.delete_button.setOnClickListener(deleteObject -> {
+            mainActivity.execute(DatabaseManager.getInstance().
+                    deleteLocation(location, mainActivity.getHandler()));
+        });
 //        holder.itemView.setOnClickListener(view -> listener.onItemClick(location.getSymbol()));
     }
 
@@ -87,6 +97,7 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
         public TextView name;
         public TextView latitude;
         public TextView longitude;
+        public Button delete_button;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -98,6 +109,7 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
             name = (TextView) itemView.findViewById(R.id.bookmarkName);
             latitude = (TextView) itemView.findViewById(R.id.bookmarkLatitude);
             longitude = (TextView) itemView.findViewById(R.id.bookmarkLongitude);
+            delete_button = (Button) itemView.findViewById(R.id.delete_button);
         }
     }
 

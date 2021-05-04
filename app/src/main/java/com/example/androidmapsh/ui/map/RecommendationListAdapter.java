@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -45,6 +46,7 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<Recommendati
     }
 
     public void loadRecommendations(List<Location> newData) {
+        Log.d(TAG, "loadRecommendations: " + newData);
         recommendationList.clear();
         recommendationList.addAll(newData);
         notifyDataSetChanged();
@@ -71,19 +73,23 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<Recommendati
         Location location = recommendationList.get(position);
 
         holder.name.setText(location.getName());
+        holder.name.setTextSize(30);
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(5);
 
 //        Spannable spannable = new SpannableString(df.format(location.getLatitude()));
 //        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange1h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 //        holder.latitude.setText(spannable, TextView.BufferType.SPANNABLE);
-        holder.latitude.setText(df.format(location.getLatitude()));
+        holder.latitude.setVisibility(View.GONE);
 
 //        spannable = new SpannableString(df.format(location.getLongitude()));
 //        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange24h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 //        holder.longitude.setText(spannable, TextView.BufferType.SPANNABLE);
-        holder.longitude.setText(df.format(location.getLongitude()));
+        holder.longitude.setVisibility(View.GONE);
 
+        holder.deleteButton.setVisibility(View.GONE);
+
+        //TODO: move map to the chosen point
         holder.itemView.setOnClickListener(view -> listener.onItemClick(location.getName()));
     }
 
@@ -92,13 +98,13 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<Recommendati
         return recommendationList.size();
     }
 
-    //TODO: create an item view holder for the places in the recommendation list
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         public TextView name;
         public TextView latitude;
         public TextView longitude;
+        public Button deleteButton;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -110,6 +116,7 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<Recommendati
             name = (TextView) itemView.findViewById(R.id.bookmarkName);
             latitude = (TextView) itemView.findViewById(R.id.bookmarkLatitude);
             longitude = (TextView) itemView.findViewById(R.id.bookmarkLongitude);
+            deleteButton = (Button) itemView.findViewById(R.id.delete_button);
         }
     }
 
