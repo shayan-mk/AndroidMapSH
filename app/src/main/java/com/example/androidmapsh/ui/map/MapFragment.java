@@ -1,5 +1,6 @@
 package com.example.androidmapsh.ui.map;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -56,15 +58,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     private MapView mapView;
     private LatLng lastClickedPoint;
     private long lastClickedTime;
+    private View root;
+
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        Log.d(TAG, "onCreateView: map is creating" + mapView);
         mainActivity = (MainActivity) getActivity();
         mapViewModel = mainActivity.getMapVM();
         Mapbox.getInstance(mainActivity, getString(R.string.access_token));
-        View root = inflater.inflate(R.layout.fragment_map, container, false);
+        root = inflater.inflate(R.layout.fragment_map, container, false);
 
         mapView = root.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -185,12 +189,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
     @Override
     public void onStart() {
+        Log.d(TAG, "onStart: "+ mapView);
         super.onStart();
         mapView.onStart();
     }
 
     @Override
     public void onStop() {
+        Log.d(TAG, "onStop: "+ mapView);
         super.onStop();
         mapView.onStop();
     }
@@ -198,18 +204,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "onDestroy: "+ mapView);
         super.onDestroy();
-        mapView.onDestroy();
+        if(mapView != null)
+            mapView.onDestroy();
     }
 
     @Override
     public void onResume() {
+        Log.d(TAG, "onResume: "+ mapView);
         super.onResume();
         mapView.onResume();
     }
 
     @Override
     public void onPause() {
+        Log.d(TAG, "onPause: "+ mapView);
         super.onPause();
         mapView.onPause();
     }
@@ -222,13 +232,51 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
     @Override
     public void onSaveInstanceState(@NotNull Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState: " + mapView);
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        if(mapView != null)
+            mapView.onSaveInstanceState(outState);
     }
 
     @Override
     public void onItemClick(String symbol) {
 
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: " + mapView);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Log.d(TAG, "onAttach: " + mapView);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated: " + mapView);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.d(TAG, "onViewStateRestored: " + mapView);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG, "onDestroyView: " + mapView);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d(TAG, "onDetach: " + mapView);
     }
 }
 

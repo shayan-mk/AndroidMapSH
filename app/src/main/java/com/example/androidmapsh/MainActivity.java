@@ -1,5 +1,6 @@
 package com.example.androidmapsh;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,6 +19,7 @@ import com.mapbox.mapboxsdk.Mapbox;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -68,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
         bookmarksVM = new ViewModelProvider(MainActivity.this).get(BookmarksViewModel.class);
         mapVM = new ViewModelProvider(MainActivity.this).get(MapViewModel.class);
+        settingsVM = new ViewModelProvider(MainActivity.this).get(SettingsViewModel.class);
+        initApp();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -123,5 +127,20 @@ public class MainActivity extends AppCompatActivity {
 
     public SettingsViewModel getSettingsVM(){
         return settingsVM;
+    }
+
+    private void initApp(){
+        SharedPreferences appSettingsPref = getSharedPreferences("AppSettingsPrefs", 0);
+        settingsVM.setSharedPreferences(appSettingsPref);
+
+        SharedPreferences.Editor editor = appSettingsPref.edit();
+        Boolean isNightMode = appSettingsPref.getBoolean("NightMode", false);
+
+        if(isNightMode){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
     }
 }

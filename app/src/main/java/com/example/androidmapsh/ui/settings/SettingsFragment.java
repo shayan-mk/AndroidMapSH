@@ -1,6 +1,7 @@
 package com.example.androidmapsh.ui.settings;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -47,20 +49,33 @@ public class SettingsFragment extends Fragment {
 
         });
 
+        SharedPreferences appSettingsPref = settingsViewModel.getSharedPreferences();
+        SharedPreferences.Editor editor = appSettingsPref.edit();
+        Boolean isNightMode = appSettingsPref.getBoolean("NightMode", false);
+
         //Initializing switch button
         @SuppressLint("UseSwitchCompatOrMaterialCode")
         Switch darModeSwitch = (Switch) root.findViewById(R.id.dark_mode_switch);
+        darModeSwitch.setChecked(isNightMode);
+
         //Setting listener for dark mode switch
         darModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    // The toggle is enabled
+                    //Dark mode
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    editor.putBoolean("NightMode", true);
                 } else {
-                    // The toggle is disabled
+                    //Light mode
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    editor.putBoolean("NightMode", false);
                 }
+                editor.apply();
             }
         });
 
         return root;
     }
+
+
 }
