@@ -3,7 +3,6 @@ package com.example.androidmapsh.ui.map;
 
 import android.content.Context;
 import android.text.Spannable;
-import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.androidmapsh.MainActivity;
 import com.example.androidmapsh.R;
 import com.example.androidmapsh.database.Location;
 
@@ -80,17 +75,17 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<Recommendati
 //        Spannable spannable = new SpannableString(df.format(location.getLatitude()));
 //        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange1h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 //        holder.latitude.setText(spannable, TextView.BufferType.SPANNABLE);
-        holder.latitude.setVisibility(View.GONE);
+        holder.lat.setVisibility(View.GONE);
 
 //        spannable = new SpannableString(df.format(location.getLongitude()));
 //        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange24h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 //        holder.longitude.setText(spannable, TextView.BufferType.SPANNABLE);
-        holder.longitude.setVisibility(View.GONE);
+        holder.lng.setVisibility(View.GONE);
 
         holder.deleteButton.setVisibility(View.GONE);
 
-        //TODO: move map to the chosen point
-        holder.itemView.setOnClickListener(view -> listener.onItemClick(location.getName()));
+        holder.itemView.setOnClickListener(view ->
+                listener.onItemClick(location.getName(), location.getLat(), location.getLng()));
     }
 
     @Override
@@ -102,8 +97,8 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<Recommendati
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         public TextView name;
-        public TextView latitude;
-        public TextView longitude;
+        public TextView lat;
+        public TextView lng;
         public Button deleteButton;
 
         // We also create a constructor that accepts the entire item row
@@ -113,16 +108,16 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<Recommendati
             // to access the context from any ViewHolder instance.
             super(itemView);
 
-            name = (TextView) itemView.findViewById(R.id.bookmarkName);
-            latitude = (TextView) itemView.findViewById(R.id.bookmarkLatitude);
-            longitude = (TextView) itemView.findViewById(R.id.bookmarkLongitude);
-            deleteButton = (Button) itemView.findViewById(R.id.delete_button);
+            name = itemView.findViewById(R.id.bookmarkName);
+            lat = itemView.findViewById(R.id.bookmarkLat);
+            lng = itemView.findViewById(R.id.bookmarkLng);
+            deleteButton = itemView.findViewById(R.id.delete_button);
         }
     }
 
     //TODO: what to do after selecting a recommended place
     //      Open the map fragment from the selected place
     public interface OnItemClickListener {
-        void onItemClick(String symbol);
+        void onItemClick(String name, double lat, double lng);
     }
 }

@@ -13,4 +13,5 @@
     <string name="off">OFF</string>
     <string name="on">ON</string>
     <string name="delete">Delete</string>
+    <string name="current_location">current</string>
 </resources>

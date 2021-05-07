@@ -1,14 +1,13 @@
-
-
-pin location
-
-
 on click bookmark o recommendation (go to location)
 reset location
 
-refining bookmark and recommendation xml
+refining bookmark_item xml (font, logo, distance)
 
 removing the top gap in fragments
+
+pin location
+
+modal?
 
 search with mic
 speed (motion sensor)

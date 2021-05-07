@@ -5,8 +5,6 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -25,16 +23,16 @@ public class Location implements Serializable {
 
     //Create latitude column
     @ColumnInfo(name = "latitude")
-    private final double latitude;
+    private final double lat;
 
     //Create longitude column
     @ColumnInfo(name = "longitude")
-    private final double longitude;
+    private final double lng;
 
-    public Location(String name, double latitude, double longitude) {
+    public Location(String name, double lat, double lng) {
         this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.lat = lat;
+        this.lng = lng;
     }
 
     public int getID() {
@@ -45,12 +43,12 @@ public class Location implements Serializable {
         return name;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public double getLat() {
+        return lat;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public double getLng() {
+        return lng;
     }
 
     public void addLocation(Location location){
