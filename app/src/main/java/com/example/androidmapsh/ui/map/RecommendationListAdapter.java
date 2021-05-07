@@ -85,7 +85,7 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<Recommendati
         holder.deleteButton.setVisibility(View.GONE);
 
         holder.itemView.setOnClickListener(view ->
-                listener.onItemClick(location.getLat(), location.getLng()));
+                listener.onItemClick(location.getName(), location.getLat(), location.getLng()));
     }
 
     @Override
@@ -118,6 +118,6 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<Recommendati
     //TODO: what to do after selecting a recommended place
     //      Open the map fragment from the selected place
     public interface OnItemClickListener {
-        void onItemClick(double lat, double lng);
+        void onItemClick(String name, double lat, double lng);
     }
 }

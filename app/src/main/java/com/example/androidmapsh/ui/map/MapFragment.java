@@ -53,8 +53,6 @@ import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, RecommendationListAdapter.OnItemClickListener {
     public static final String TAG = MapFragment.class.getName();
-//    private static final long TAP_INTERVAL = 1000; // in millis
-//    private static final double DISTANCE = 0.1;
 
     private MapViewModel mapViewModel;
     private MainActivity mainActivity;
@@ -63,6 +61,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     private MapView mapView;
     private EditText editText;
     private View root;
+    private boolean isTyping;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -76,11 +75,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         mapView = root.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-//        lastClickedPoint = new LatLng();
-//        lastClickedTime = 0;
 
         //-------------------------------------------------------------------------------------
 
+        isTyping = true;
         editText = root.findViewById(R.id.edit_text);
         //TODO: search using voice
         Button micButton = root.findViewById(R.id.button);
@@ -92,12 +90,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         mapViewModel.setRla(recommendationListAdapter);
 
         Button currentLocButton = root.findViewById(R.id.current_loc_button);
-        currentLocButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToCurrentLoc();
-            }
-        });
+        currentLocButton.setOnClickListener(v -> goToCurrentLoc());
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -108,8 +101,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.d(TAG, "onTextChanged: " + s);
-                mainActivity.execute(NetworkManager.getInstance()
-                        .loadSearchResults(s.toString(), mainActivity.getHandler()));
+                if (isTyping) {
+                    mainActivity.execute(NetworkManager.getInstance()
+                            .loadSearchResults(s.toString(), mainActivity.getHandler()));
+                }
+                isTyping = true;
             }
 
             @Override
@@ -126,17 +122,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         MapFragment.this.mapboxMap = mapboxMap;
         mapboxMap.setStyle(Style.MAPBOX_STREETS, this::enableLocationComponent);
-//        mapboxMap.addOnMapClickListener(point -> {
-//            Log.d(TAG, "onMapReady: clicked!" + point.getLatitude() + point.getLongitude());
-//            long now = System.currentTimeMillis();
-//            if (now - lastClickedTime < TAP_INTERVAL && point.distanceTo(lastClickedPoint) < DISTANCE) {
-//                Log.d(TAG, "onMapReady: double click!" + point.getLatitude() + point.getLongitude());
-//                new SaveLocationDialog(point.getLatitude(), point.getLongitude()).show(mainActivity.getSupportFragmentManager(), "SaveLocation");
-//            }
-//            lastClickedPoint = point;
-//            lastClickedTime = now;
-//            return true;
-//        });
         mapboxMap.addOnMapLongClickListener(point -> {
             Log.d(TAG, "onMapReady: hold" + point.getLatitude() + point.getLongitude());
             //TODO drop red pin
@@ -256,8 +241,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
 
     @Override
-    public void onItemClick(double lat, double lng) {
+    public void onItemClick(String name, double lat, double lng) {
         goToLocation(lat, lng);
+        isTyping = false;
+        editText.setText(name);
         mapViewModel.updateRecommendations(null);
         mainActivity.hideSoftKeyboard();
     }
