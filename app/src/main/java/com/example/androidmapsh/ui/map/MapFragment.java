@@ -1,21 +1,25 @@
 package com.example.androidmapsh.ui.map;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -56,12 +60,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
     private MapView mapView;
+    private ImageView location;
     private LatLng lastClickedPoint;
     private long lastClickedTime;
     private View root;
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: map is creating" + mapView);
@@ -82,6 +88,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         //TODO: search using voice
         Button micButton = root.findViewById(R.id.button);
         RecyclerView rcView = root.findViewById(R.id.list_view);
+        location = (ImageView)  root.findViewById(R.id.image_view);
+        location.setImageResource(R.drawable.ic_location_black);
 
         RecommendationListAdapter recommendationListAdapter = new RecommendationListAdapter(mainActivity, this);
         rcView.setAdapter(recommendationListAdapter);
@@ -107,7 +115,49 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             }
         });
 
+//        root.setOnCapturedPointerListener(new View.OnCapturedPointerListener() {
+//            @Override
+//            public boolean onCapturedPointer (View view, MotionEvent motionEvent) {
+//                // Get the coordinates required by your app
+//                float horizontalOffset = motionEvent.getX();
+//                float verticalOffset = motionEvent.getY();
+//                Log.d(TAG, "onCapturedPointer: " + horizontalOffset + " " + verticalOffset);
+//                location.setX(horizontalOffset);
+//                location.setY(verticalOffset);
+//
+//                return true;
+//            }
+//        });
+//
+//        root.setOnTouchListener(new View.OnTouchListener() {
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (event.getAction() == MotionEvent.ACTION_DOWN){
+//                    // Get the coordinates required by your app
+//
+//                }
+//                float horizontalOffset = event.getX();
+//                float verticalOffset = event.getY();
+//                Log.d(TAG, "onCapturedPointer: " + horizontalOffset + " " + verticalOffset);
+//                location.setX(horizontalOffset);
+//                location.setY(verticalOffset);
+//                return true;
+//            }
+//        });
 
+        root.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN){
+                    // Get the coordinates required by your app
+
+                }
+                float horizontalOffset = event.getX();
+                float verticalOffset = event.getY();
+                Log.d(TAG, "onCapturedPointer: " + horizontalOffset + " " + verticalOffset);
+                location.setX(horizontalOffset);
+                location.setY(verticalOffset);
+                return true;
+            }
+        });
 
         return root;
     }
@@ -128,6 +178,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             lastClickedTime = now;
             return true;
         });
+
 
         UiSettings uiSettings = mapboxMap.getUiSettings();
         uiSettings.setDoubleTapGesturesEnabled(false);
