@@ -7,14 +7,17 @@
     android:dividerPadding="10dp"
     android:orientation="vertical"
     android:padding="16dp"
-    app:barrierMargin="10dp">
+    app:barrierMargin="10dp"
+    android:backgroundTint="@color/backgroundColor">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipChildren="true"
         android:dividerPadding="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:backgroundTint="@color/backgroundColor">
+
 
         <EditText
             android:id="@+id/edit_text"
@@ -27,6 +30,8 @@
             android:hint="@string/search"
             android:padding="12dp"
             android:singleLine="true"
+            android:textColor="@color/textColor"
+            android:backgroundTint="@color/textBoxColor"
             />
 
         <Button
@@ -34,7 +39,7 @@
             android:layout_width="20dp"
             android:layout_height="match_parent"
             android:drawableRight="@drawable/ic_mic"
-            app:backgroundTint="@color/white"
+            app:backgroundTint="@color/buttonColor"
             android:paddingRight="0dp"
             android:paddingLeft="0dp"
             android:drawableEnd="@drawable/ic_mic" />

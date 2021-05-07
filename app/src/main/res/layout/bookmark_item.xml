@@ -21,6 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
+        android:textColor="@color/textColor"
+        android:backgroundTint="@color/backgroundColor"
         app:layout_constraintStart_toEndOf="@+id/bookmarkIcon"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,6 +32,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
+        android:textColor="@color/textColor"
+        android:backgroundTint="@color/backgroundColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/bookmarkIcon" />
 

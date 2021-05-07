@@ -381,6 +381,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         try {
             //show dialog
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
+            Log.d(TAG, "speak: ");
         }
         catch (Exception e){
             //if there was some error
@@ -395,7 +396,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.d(TAG, "onActivityResult: " + data);
         switch (requestCode){
             case REQUEST_CODE_SPEECH_INPUT:{
                 if (resultCode == RESULT_OK && null!=data){

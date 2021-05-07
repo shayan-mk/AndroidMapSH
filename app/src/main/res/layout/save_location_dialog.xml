@@ -10,6 +10,8 @@
 
     <TextView
         android:id="@+id/text_view"
+        android:backgroundTint="@color/backgroundColor"
+        android:textColor="@color/textColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save Location: (Lat, Long)"
@@ -30,6 +32,8 @@
         android:layout_marginBottom="8dp"
         android:background="@android:drawable/editbox_background"
         android:hint="@string/search"
+        android:backgroundTint="@color/backgroundColor"
+        android:textColor="@color/textColor"
         android:padding="12dp"
         android:scaleType="fitCenter"
 
@@ -48,12 +52,14 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+
         <View
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:background="?android:attr/listDivider" />
+
 
         <Button
             android:id="@+id/saveButton"
@@ -65,7 +71,7 @@
             android:padding="16dp"
             android:scaleType="fitCenter"
             android:text="Save"
-            android:backgroundTint="@color/teal_200"
+            android:backgroundTint="@color/buttonColor"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5" />
