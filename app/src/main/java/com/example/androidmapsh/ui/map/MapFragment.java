@@ -1,5 +1,6 @@
 package com.example.androidmapsh.ui.map;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,6 +10,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -26,10 +28,13 @@ import com.example.androidmapsh.MainActivity;
 import com.example.androidmapsh.R;
 import com.example.androidmapsh.database.Location;
 import com.example.androidmapsh.map.NetworkManager;
+import com.mapbox.android.core.location.LocationEngineRequest;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.android.gestures.AndroidGesturesManager;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
@@ -48,18 +53,16 @@ import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, RecommendationListAdapter.OnItemClickListener {
     public static final String TAG = MapFragment.class.getName();
-    private static final long TAP_INTERVAL = 1000; // in millis
-    private static final double DISTANCE = 0.1;
+//    private static final long TAP_INTERVAL = 1000; // in millis
+//    private static final double DISTANCE = 0.1;
 
     private MapViewModel mapViewModel;
     private MainActivity mainActivity;
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
     private MapView mapView;
-    private LatLng lastClickedPoint;
-    private long lastClickedTime;
+    private EditText editText;
     private View root;
-
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -73,12 +76,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         mapView = root.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-        lastClickedPoint = new LatLng();
-        lastClickedTime = 0;
+//        lastClickedPoint = new LatLng();
+//        lastClickedTime = 0;
 
         //-------------------------------------------------------------------------------------
 
-        EditText editText = root.findViewById(R.id.edit_text);
+        editText = root.findViewById(R.id.edit_text);
         //TODO: search using voice
         Button micButton = root.findViewById(R.id.button);
         RecyclerView rcView = root.findViewById(R.id.list_view);
@@ -87,6 +90,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         rcView.setAdapter(recommendationListAdapter);
         rcView.setLayoutManager(new LinearLayoutManager(mainActivity));
         mapViewModel.setRla(recommendationListAdapter);
+
+        Button currentLocButton = root.findViewById(R.id.current_loc_button);
+        currentLocButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToCurrentLoc();
+            }
+        });
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -108,7 +119,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         });
 
 
-
         return root;
     }
 
@@ -116,16 +126,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         MapFragment.this.mapboxMap = mapboxMap;
         mapboxMap.setStyle(Style.MAPBOX_STREETS, this::enableLocationComponent);
-        mapboxMap.addOnMapClickListener(point -> {
-            Log.d(TAG, "onMapReady: clicked!" + point.getLatitude() + point.getLongitude());
-            long now = System.currentTimeMillis();
-            if (now - lastClickedTime < TAP_INTERVAL && point.distanceTo(lastClickedPoint) < DISTANCE) {
-                //TODO drop pin
-                Log.d(TAG, "onMapReady: double click!" + point.getLatitude() + point.getLongitude());
-                new SaveLocationDialog(point.getLatitude(), point.getLongitude()).show(mainActivity.getSupportFragmentManager(), "SaveLocation");
-            }
-            lastClickedPoint = point;
-            lastClickedTime = now;
+//        mapboxMap.addOnMapClickListener(point -> {
+//            Log.d(TAG, "onMapReady: clicked!" + point.getLatitude() + point.getLongitude());
+//            long now = System.currentTimeMillis();
+//            if (now - lastClickedTime < TAP_INTERVAL && point.distanceTo(lastClickedPoint) < DISTANCE) {
+//                Log.d(TAG, "onMapReady: double click!" + point.getLatitude() + point.getLongitude());
+//                new SaveLocationDialog(point.getLatitude(), point.getLongitude()).show(mainActivity.getSupportFragmentManager(), "SaveLocation");
+//            }
+//            lastClickedPoint = point;
+//            lastClickedTime = now;
+//            return true;
+//        });
+        mapboxMap.addOnMapLongClickListener(point -> {
+            Log.d(TAG, "onMapReady: hold" + point.getLatitude() + point.getLongitude());
+            //TODO drop red pin
+            SaveLocationDialog saveBookmark = new SaveLocationDialog(point.getLatitude(), point.getLongitude());
+            saveBookmark.show(mainActivity.getSupportFragmentManager(), "SaveLocation");
             return true;
         });
 
@@ -138,8 +154,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(mainActivity)) {
 
-        // Enable the most basic pulsing styling by ONLY using
-        // the `.pulseEnabled()` method
+            // Enable the most basic pulsing styling by ONLY using
+            // the `.pulseEnabled()` method
             LocationComponentOptions customLocationComponentOptions = LocationComponentOptions.builder(mainActivity)
                     .pulseEnabled(true)
                     .build();
@@ -189,14 +205,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
     @Override
     public void onStart() {
-        Log.d(TAG, "onStart: "+ mapView);
+        Log.d(TAG, "onStart: " + mapView);
         super.onStart();
         mapView.onStart();
     }
 
     @Override
     public void onStop() {
-        Log.d(TAG, "onStop: "+ mapView);
+        Log.d(TAG, "onStop: " + mapView);
         super.onStop();
         mapView.onStop();
     }
@@ -204,22 +220,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy: "+ mapView);
+        Log.d(TAG, "onDestroy: " + mapView);
         super.onDestroy();
-        if(mapView != null)
+        if (mapView != null)
             mapView.onDestroy();
     }
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume: "+ mapView);
+        Log.d(TAG, "onResume: " + mapView);
         super.onResume();
         mapView.onResume();
     }
 
     @Override
     public void onPause() {
-        Log.d(TAG, "onPause: "+ mapView);
+        Log.d(TAG, "onPause: " + mapView);
         super.onPause();
         mapView.onPause();
     }
@@ -234,13 +250,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     public void onSaveInstanceState(@NotNull Bundle outState) {
         Log.d(TAG, "onSaveInstanceState: " + mapView);
         super.onSaveInstanceState(outState);
-        if(mapView != null)
+        if (mapView != null)
             mapView.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onItemClick(String symbol) {
 
+    @Override
+    public void onItemClick(double lat, double lng) {
+        goToLocation(lat, lng);
+        mapViewModel.updateRecommendations(null);
+        mainActivity.hideSoftKeyboard();
     }
 
     @Override
@@ -277,6 +296,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     public void onDetach() {
         super.onDetach();
         Log.d(TAG, "onDetach: " + mapView);
+    }
+
+    public void goToLocation(double lat, double lng) {
+        CameraPosition old = mapboxMap.getCameraPosition();
+        CameraPosition pos = new CameraPosition.Builder()
+                .target(new LatLng(lat,lng))
+                .zoom(old.zoom)
+                .tilt(old.tilt)
+                .build();
+        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos),1000);
+    }
+
+    public void goToCurrentLoc() {
+        android.location.Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
+        double lat = lastKnownLocation.getLatitude();
+        double lng = lastKnownLocation.getLongitude();
+        goToLocation(lat, lng);
+
     }
 }
 

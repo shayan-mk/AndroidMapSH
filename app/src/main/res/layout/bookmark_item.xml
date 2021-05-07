@@ -25,7 +25,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/bookmarkLatitude"
+        android:id="@+id/bookmarkLat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -34,13 +34,13 @@
         app:layout_constraintStart_toEndOf="@+id/bookmarkIcon" />
 
     <TextView
-        android:id="@+id/bookmarkLongitude"
+        android:id="@+id/bookmarkLng"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/bookmarkLatitude"
+        app:layout_constraintStart_toEndOf="@+id/bookmarkLat"
         tools:layout_editor_absoluteY="48dp" />
 
     <Button

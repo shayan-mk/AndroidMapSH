@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidmapsh.MainActivity;
@@ -29,7 +28,7 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
     private final Context context;
     private final OnItemClickListener listener;
     private final Spannable.Factory spannableFactory;
-    private MainActivity mainActivity;
+    private final MainActivity mainActivity;
 
     public BookmarkListAdapter(Context context, OnItemClickListener listener, MainActivity mainActivity) {
         this.context = context;
@@ -55,8 +54,8 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
         BookmarkListAdapter.ViewHolder viewHolder = new ViewHolder(cryptoView);
 
         viewHolder.name.setSpannableFactory(spannableFactory);
-        viewHolder.latitude.setSpannableFactory(spannableFactory);
-        viewHolder.longitude.setSpannableFactory(spannableFactory);
+        viewHolder.lat.setSpannableFactory(spannableFactory);
+        viewHolder.lng.setSpannableFactory(spannableFactory);
         viewHolder.delete_button.setSpannableFactory(spannableFactory);
         // Return a new holder instance
         return viewHolder;
@@ -70,13 +69,13 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(5);
 
-        Spannable spannable = new SpannableString(df.format(location.getLatitude()));
+        Spannable spannable = new SpannableString(df.format(location.getLat()));
 //        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange1h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        holder.latitude.setText(spannable, TextView.BufferType.SPANNABLE);
+        holder.lat.setText(spannable, TextView.BufferType.SPANNABLE);
 
-        spannable = new SpannableString(df.format(location.getLongitude()));
+        spannable = new SpannableString(df.format(location.getLng()));
 //        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange24h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        holder.longitude.setText(spannable, TextView.BufferType.SPANNABLE);
+        holder.lng.setText(spannable, TextView.BufferType.SPANNABLE);
 
         holder.delete_button.setOnClickListener(deleteObject -> {
             mainActivity.execute(DatabaseManager.getInstance().
@@ -95,8 +94,8 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         public TextView name;
-        public TextView latitude;
-        public TextView longitude;
+        public TextView lat;
+        public TextView lng;
         public Button delete_button;
 
         // We also create a constructor that accepts the entire item row
@@ -106,15 +105,15 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
             // to access the context from any ViewHolder instance.
             super(itemView);
 
-            name = (TextView) itemView.findViewById(R.id.bookmarkName);
-            latitude = (TextView) itemView.findViewById(R.id.bookmarkLatitude);
-            longitude = (TextView) itemView.findViewById(R.id.bookmarkLongitude);
-            delete_button = (Button) itemView.findViewById(R.id.delete_button);
+            name = itemView.findViewById(R.id.bookmarkName);
+            lat = itemView.findViewById(R.id.bookmarkLat);
+            lng = itemView.findViewById(R.id.bookmarkLng);
+            delete_button = itemView.findViewById(R.id.delete_button);
         }
     }
 
     public interface OnItemClickListener {
-        void onItemClick(String symbol);
+        void onItemClick(double lat, double lng);
     }
 
     public void deleteFromList(Location location){
