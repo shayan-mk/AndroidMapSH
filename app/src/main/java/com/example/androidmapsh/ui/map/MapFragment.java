@@ -2,8 +2,10 @@ package com.example.androidmapsh.ui.map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -53,10 +55,14 @@ import com.mapbox.mapboxsdk.maps.UiSettings;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, RecommendationListAdapter.OnItemClickListener {
     public static final String TAG = MapFragment.class.getName();
+    private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
+    private static final int RESULT_OK = -1;
 
     private MapViewModel mapViewModel;
     private MainActivity mainActivity;
@@ -100,6 +106,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
         Button currentLocButton = root.findViewById(R.id.current_loc_button);
         currentLocButton.setOnClickListener(v -> goToCurrentLoc());
+        micButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                speak();
+            }
+        });
+
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -354,6 +367,47 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         double lng = lastKnownLocation.getLongitude();
         goToLocation(lat, lng);
 
+    }
+
+    private void speak(){
+        //intent to show speech
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say the name of the location");
+
+        //start intent
+        try {
+            //show dialog
+            startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
+        }
+        catch (Exception e){
+            //if there was some error
+            //get message of error and show
+            Toast.makeText(mainActivity, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+            case REQUEST_CODE_SPEECH_INPUT:{
+                if (resultCode == RESULT_OK && null!=data){
+                    //get text array from voice intent
+                    ArrayList<String> result = data.
+                            getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+                    editText.setText(result.get(0));
+                }
+                break;
+            }
+        }
     }
 }
 
