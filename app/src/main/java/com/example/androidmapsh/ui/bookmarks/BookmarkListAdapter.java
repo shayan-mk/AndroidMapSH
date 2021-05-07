@@ -81,7 +81,7 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
             mainActivity.execute(DatabaseManager.getInstance().
                     deleteLocation(location, mainActivity.getHandler()));
         });
-//        holder.itemView.setOnClickListener(view -> listener.onItemClick(location.getSymbol()));
+        holder.itemView.setOnClickListener(view -> listener.onItemClick(location.getLat(), location.getLng()));
     }
 
     @Override

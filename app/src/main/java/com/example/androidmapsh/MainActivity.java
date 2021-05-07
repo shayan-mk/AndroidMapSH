@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private BookmarksViewModel bookmarksVM;
     private MapViewModel mapVM;
     private SettingsViewModel settingsVM;
+    private NavController navController;
 
     //Defining Message Codes
     private static final int BASE_MESSAGE_CODE = 1000;
@@ -81,9 +82,10 @@ public class MainActivity extends AppCompatActivity {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_bookmarks, R.id.navigation_map, R.id.navigation_settings)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
 
         handler = new Handler(Looper.getMainLooper()) {
             @Override
@@ -150,5 +152,11 @@ public class MainActivity extends AppCompatActivity {
         if(inputMethodManager.isAcceptingText()){
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    public void goToMap (double lat, double lng) {
+        mapVM.setStart(lat, lng);
+        navController.navigate(R.id.navigation_map);
+        Log.d(TAG, "goToMap: " + lat + " " + lng);
     }
 }

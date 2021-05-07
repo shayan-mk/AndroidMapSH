@@ -84,6 +84,8 @@ public class BookmarksFragment extends Fragment implements BookmarkListAdapter.O
 
     @Override
     public void onItemClick(double lat, double lng) {
+        Log.d(TAG, "onItemClick: salam");
+        mainActivity.goToMap(lat, lng);
 
     }
 

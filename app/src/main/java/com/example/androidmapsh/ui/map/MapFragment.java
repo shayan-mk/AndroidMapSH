@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -75,11 +76,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     private long lastClickedTime;
     private View root;
     private boolean isTyping;
+    private static final double DEFAULT_ZOOM = 12;
+    private static final double DEFAULT_TILT = 0;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: map is creating" + mapView);
+        Log.d(TAG, "onCreateView: fragment" + this);
         mainActivity = (MainActivity) getActivity();
         mapViewModel = mainActivity.getMapVM();
         Mapbox.getInstance(mainActivity, getString(R.string.access_token));
@@ -96,8 +100,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         //TODO: search using voice
         Button micButton = root.findViewById(R.id.button);
         RecyclerView rcView = root.findViewById(R.id.list_view);
-        location = (ImageView)  root.findViewById(R.id.image_view);
-        location.setImageResource(R.drawable.ic_location_black);
+//        location = (ImageView)  root.findViewById(R.id.image_view);
+//        location.setImageResource(R.drawable.ic_location_black);
 
         RecommendationListAdapter recommendationListAdapter = new RecommendationListAdapter(mainActivity, this);
         rcView.setAdapter(recommendationListAdapter);
@@ -185,8 +189,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
+        Log.d(TAG, "onMapReady: ");
         MapFragment.this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, this::enableLocationComponent);
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style loadedMapStyle) {
+                MapFragment.this.enableLocationComponent(loadedMapStyle);
+                ImageView hoveringMarker = new ImageView(mainActivity);
+                hoveringMarker.setImageResource(R.drawable.red_marker);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+                hoveringMarker.setLayoutParams(params);
+                mapView.addView(hoveringMarker);
+            }
+        });
+
         mapboxMap.addOnMapLongClickListener(point -> {
             Log.d(TAG, "onMapReady: hold" + point.getLatitude() + point.getLongitude());
             //TODO drop red pin
@@ -194,14 +212,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             saveBookmark.show(mainActivity.getSupportFragmentManager(), "SaveLocation");
             return true;
         });
-
-
-        UiSettings uiSettings = mapboxMap.getUiSettings();
-        uiSettings.setDoubleTapGesturesEnabled(false);
     }
 
     @SuppressWarnings({"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
+        Log.d(TAG, "enableLocationComponent: ");
         // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(mainActivity)) {
 
@@ -232,16 +247,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(mainActivity);
         }
+
+        if (mapViewModel.hasStart()) {
+            Log.d(TAG, "onMapReady: call mishe?");
+            goToLocation(mapViewModel.getStartLat(), mapViewModel.getStartLng());
+            mapViewModel.startFromCurrentLoc();
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d(TAG, "onRequestPermissionsResult: ");
     }
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
         Toast.makeText(mainActivity, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
+        Log.d(TAG, "onExplanationNeeded: ");
     }
 
     @Override
@@ -252,6 +275,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             Toast.makeText(mainActivity, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
             mainActivity.finish();
         }
+        Log.d(TAG, "onPermissionResult: ");
     }
 
     @Override
@@ -352,11 +376,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     }
 
     public void goToLocation(double lat, double lng) {
-        CameraPosition old = mapboxMap.getCameraPosition();
         CameraPosition pos = new CameraPosition.Builder()
                 .target(new LatLng(lat,lng))
-                .zoom(old.zoom)
-                .tilt(old.tilt)
+                .zoom(DEFAULT_ZOOM)
+                .tilt(DEFAULT_TILT)
                 .build();
         mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos),1000);
     }

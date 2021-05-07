@@ -1,43 +1,51 @@
 package com.example.androidmapsh.ui.map;
 
-import android.util.Log;
-
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.androidmapsh.database.Location;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class MapViewModel extends ViewModel {
 
     private static final String TAG = MapViewModel.class.getName();
-//    private MutableLiveData<List<Location>> recommendations;
     private SaveLocationDialog saveLocationDialog;
     private RecommendationListAdapter rla;
+    private boolean hasStart;
+    private double startLat;
+    private double startLng;
 
     public MapViewModel() {
-//        recommendations = new MutableLiveData<>();
-//        recommendations.setValue(new ArrayList<>());
+        hasStart = false;
     }
 
-//    public LiveData<List<Location>> getRecommendation(){
-//        return recommendations;
-//    }
+    public boolean hasStart() {
+        return hasStart;
+    }
 
+    public double getStartLat() {
+        return startLat;
+    }
 
+    public double getStartLng() {
+        return startLng;
+    }
+
+    public void startFromCurrentLoc() {
+        hasStart = false;
+    }
+
+    public void setStart(double lat, double lng) {
+        hasStart = true;
+        startLat = lat;
+        startLng = lng;
+    }
     public void setRla(RecommendationListAdapter rla) {
         this.rla = rla;
     }
 
     public void updateRecommendations(Location[] results){
-//        Log.d(TAG, "updateRecommendations: " + results);
-//        recommendations.getValue().clear();
-//        recommendations.getValue().addAll(Arrays.asList(results));
-//        Log.d(TAG, "updateRecommendations: " + recommendations.getValue().get(0).getName());
         if(results != null)
             rla.loadRecommendations(Arrays.asList(results));
         else
