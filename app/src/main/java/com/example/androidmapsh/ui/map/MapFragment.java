@@ -1,5 +1,6 @@
 package com.example.androidmapsh.ui.map;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.view.VelocityTracker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -129,6 +131,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
                 Log.d(TAG, "afterTextChanged: " + s);
             }
         });
+
+
 
         return root;
     }
@@ -392,6 +396,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
                 editText.setText(result.get(0));
             }
         }
+    }
+
+    public double getVelocity(){
+        VelocityTracker vt = VelocityTracker.obtain();
+        vt.computeCurrentVelocity(1);
+        float xv = vt.getXVelocity();
+        float yv = vt.getYVelocity();
+        vt.recycle();
+        return Math.sqrt(xv*xv + yv*yv );
     }
 }
 
