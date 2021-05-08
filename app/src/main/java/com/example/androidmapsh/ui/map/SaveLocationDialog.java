@@ -39,7 +39,6 @@ public class SaveLocationDialog extends AppCompatDialogFragment {
     }
 
 
-
     @NonNull
     @Override
     @SuppressLint("SetTextI18n")
@@ -63,20 +62,16 @@ public class SaveLocationDialog extends AppCompatDialogFragment {
                         insertLocation(new Location(name, latitude, longitude)
                                       , mainActivity.getHandler()));
                 Toast.makeText(mainActivity, "Saved successfully!", Toast.LENGTH_SHORT).show();
-            }else {
+                dismiss();
+            } else {
                 Toast.makeText(mainActivity, "Enter the name!", Toast.LENGTH_SHORT).show();
             }
 
-            this.dismiss();
+            mainActivity.hideSoftKeyboard();
         });
-
 
         builder.setView(view);
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
-            if (dialog != null) {
-                dialog.dismiss();
-            }
-        });
+        builder.setCancelable(true);
 
         return builder.create();
     }

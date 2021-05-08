@@ -56,6 +56,10 @@ public class MapViewModel extends ViewModel {
         return saveLocationDialog;
     }
 
+    public void setSaveLocationDialog(SaveLocationDialog saveLocationDialog) {
+        this.saveLocationDialog = saveLocationDialog;
+    }
+
     public void dismissSaveLocationDialog(){
         if(saveLocationDialog != null){
             saveLocationDialog.dismissDialog();

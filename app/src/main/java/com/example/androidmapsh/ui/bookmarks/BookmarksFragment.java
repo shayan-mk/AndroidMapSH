@@ -7,13 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,9 +19,6 @@ import com.example.androidmapsh.MainActivity;
 import com.example.androidmapsh.R;
 import com.example.androidmapsh.database.DatabaseManager;
 import com.example.androidmapsh.database.Location;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BookmarksFragment extends Fragment implements BookmarkListAdapter.OnItemClickListener{
     public static final String TAG = BookmarksFragment.class.getName();
@@ -43,7 +38,7 @@ public class BookmarksFragment extends Fragment implements BookmarkListAdapter.O
         //Assign variable
         final EditText editText = root.findViewById(R.id.edit_text);
         //TODO: search using voice
-        final Button micButton = root.findViewById(R.id.button);
+        final Button micButton = root.findViewById(R.id.mic_button);
         Log.d(TAG, "onCreateView: Initializing Recycler view");
         final RecyclerView listView = root.findViewById(R.id.list_view_bookmarks);
 

@@ -35,7 +35,7 @@
             />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/mic_button"
             android:layout_width="20dp"
             android:layout_height="match_parent"
             android:drawableRight="@drawable/ic_mic"

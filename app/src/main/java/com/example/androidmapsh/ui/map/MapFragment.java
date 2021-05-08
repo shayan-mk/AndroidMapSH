@@ -1,21 +1,17 @@
 package com.example.androidmapsh.ui.map;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -24,21 +20,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidmapsh.MainActivity;
 import com.example.androidmapsh.R;
-import com.example.androidmapsh.database.Location;
 import com.example.androidmapsh.map.NetworkManager;
-import com.mapbox.android.core.location.LocationEngineRequest;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.android.gestures.AndroidGesturesManager;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -52,7 +42,6 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.maps.UiSettings;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -71,9 +60,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     private MapboxMap mapboxMap;
     private MapView mapView;
     private EditText editText;
-    private ImageView location;
-    private LatLng lastClickedPoint;
-    private long lastClickedTime;
+    private ImageView hoveringMarker;
     private View root;
     private boolean isTyping;
     private static final double DEFAULT_ZOOM = 12;
@@ -98,7 +85,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         isTyping = true;
         editText = root.findViewById(R.id.edit_text);
         //TODO: search using voice
-        Button micButton = root.findViewById(R.id.button);
+        Button micButton = root.findViewById(R.id.mic_button);
         RecyclerView rcView = root.findViewById(R.id.list_view);
 //        location = (ImageView)  root.findViewById(R.id.image_view);
 //        location.setImageResource(R.drawable.ic_location_black);
@@ -107,6 +94,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         rcView.setAdapter(recommendationListAdapter);
         rcView.setLayoutManager(new LinearLayoutManager(mainActivity));
         mapViewModel.setRla(recommendationListAdapter);
+
+        hoveringMarker = new ImageView(mainActivity);
+        hoveringMarker.setImageResource(R.drawable.red_marker);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+        hoveringMarker.setLayoutParams(params);
 
         Button currentLocButton = root.findViewById(R.id.current_loc_button);
         currentLocButton.setOnClickListener(v -> goToCurrentLoc());
@@ -140,50 +134,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             }
         });
 
-//        root.setOnCapturedPointerListener(new View.OnCapturedPointerListener() {
-//            @Override
-//            public boolean onCapturedPointer (View view, MotionEvent motionEvent) {
-//                // Get the coordinates required by your app
-//                float horizontalOffset = motionEvent.getX();
-//                float verticalOffset = motionEvent.getY();
-//                Log.d(TAG, "onCapturedPointer: " + horizontalOffset + " " + verticalOffset);
-//                location.setX(horizontalOffset);
-//                location.setY(verticalOffset);
-//
-//                return true;
-//            }
-//        });
-//
-//        root.setOnTouchListener(new View.OnTouchListener() {
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_DOWN){
-//                    // Get the coordinates required by your app
-//
-//                }
-//                float horizontalOffset = event.getX();
-//                float verticalOffset = event.getY();
-//                Log.d(TAG, "onCapturedPointer: " + horizontalOffset + " " + verticalOffset);
-//                location.setX(horizontalOffset);
-//                location.setY(verticalOffset);
-//                return true;
-//            }
-//        });
-
-        root.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN){
-                    // Get the coordinates required by your app
-
-                }
-                float horizontalOffset = event.getX();
-                float verticalOffset = event.getY();
-                Log.d(TAG, "onCapturedPointer: " + horizontalOffset + " " + verticalOffset);
-                location.setX(horizontalOffset);
-                location.setY(verticalOffset);
-                return true;
-            }
-        });
-
         return root;
     }
 
@@ -195,20 +145,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             @Override
             public void onStyleLoaded(@NonNull Style loadedMapStyle) {
                 MapFragment.this.enableLocationComponent(loadedMapStyle);
-                ImageView hoveringMarker = new ImageView(mainActivity);
-                hoveringMarker.setImageResource(R.drawable.red_marker);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-                hoveringMarker.setLayoutParams(params);
-                mapView.addView(hoveringMarker);
             }
         });
 
         mapboxMap.addOnMapLongClickListener(point -> {
-            Log.d(TAG, "onMapReady: hold" + point.getLatitude() + point.getLongitude());
-            //TODO drop red pin
-            SaveLocationDialog saveBookmark = new SaveLocationDialog(point.getLatitude(), point.getLongitude());
+            double lat = point.getLatitude();
+            double lng = point.getLongitude();
+            Log.d(TAG, "onMapReady: hold" + lat + " " + lng);
+            goToLocation(lat, lng);
+            showPin();
+            SaveLocationDialog saveBookmark = new SaveLocationDialog(lat,lng);
             saveBookmark.show(mainActivity.getSupportFragmentManager(), "SaveLocation");
             return true;
         });
@@ -426,13 +372,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
                     //get text array from voice intent
                     ArrayList<String> result = data.
                             getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
                     editText.setText(result.get(0));
                 }
                 break;
             }
         }
     }
+
+    public void showPin() {
+        mapView.addView(hoveringMarker);
+    }
+
+    public void hidePin() {
+        mapView.removeView(hoveringMarker);
+    }
+
 }
 
 
