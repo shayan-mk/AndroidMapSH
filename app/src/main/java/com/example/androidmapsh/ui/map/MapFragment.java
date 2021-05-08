@@ -7,14 +7,11 @@ import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,6 +25,9 @@ import com.example.androidmapsh.R;
 import com.example.androidmapsh.map.NetworkManager;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -41,6 +41,10 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.maps.UiSettings;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +52,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, RecommendationListAdapter.OnItemClickListener {
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
+
+public class MapFragment extends Fragment implements OnMapReadyCallback, PermissionsListener,
+        RecommendationListAdapter.OnItemClickListener {
     public static final String TAG = MapFragment.class.getName();
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
     private static final int RESULT_OK = -1;
@@ -59,11 +69,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     private MapboxMap mapboxMap;
     private MapView mapView;
     private EditText editText;
-    private ImageView hoveringMarker;
     private View root;
     private boolean isTyping;
     private static final double DEFAULT_ZOOM = 12;
     private static final double DEFAULT_TILT = 0;
+    private static final String RED_PIN_ICON_ID = "red-pin-icon-id";
+    private static final String BLACK_PIN_ICON_ID = "black-pin-icon-id";
+    private static final String ICON_LAYER_ID = "icon-layer-id";
+    private static final String ICON_SOURCE_ID = "icon-source-id";
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -81,31 +94,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
         //-------------------------------------------------------------------------------------
 
-        isTyping = true;
-        editText = root.findViewById(R.id.edit_text);
-        //TODO: search using voice
         Button micButton = root.findViewById(R.id.mic_button);
-        RecyclerView rcView = root.findViewById(R.id.list_view);
-//        location = (ImageView)  root.findViewById(R.id.image_view);
-//        location.setImageResource(R.drawable.ic_location_black);
+        micButton.setOnClickListener(v -> speak());
 
+        Button currentLocButton = root.findViewById(R.id.current_loc_button);
+        currentLocButton.setOnClickListener(v -> goToCurrentLoc());
+
+        RecyclerView rcView = root.findViewById(R.id.list_view);
         RecommendationListAdapter recommendationListAdapter = new RecommendationListAdapter(mainActivity, this);
         rcView.setAdapter(recommendationListAdapter);
         rcView.setLayoutManager(new LinearLayoutManager(mainActivity));
         mapViewModel.setRla(recommendationListAdapter);
 
-        hoveringMarker = new ImageView(mainActivity);
-        hoveringMarker.setImageResource(R.drawable.red_marker);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-        hoveringMarker.setLayoutParams(params);
-
-        Button currentLocButton = root.findViewById(R.id.current_loc_button);
-        currentLocButton.setOnClickListener(v -> goToCurrentLoc());
-        micButton.setOnClickListener(v -> speak());
-
-
+        isTyping = true;
+        editText = root.findViewById(R.id.edit_text);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -135,22 +137,45 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         Log.d(TAG, "onMapReady: ");
         MapFragment.this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, this::enableLocationComponent);
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, loadedMapStyle -> {
+            MapFragment.this.enableLocationComponent(loadedMapStyle);
+            UiSettings uiSettings = mapboxMap.getUiSettings();
+            uiSettings.setAllGesturesEnabled(true);
+            loadedMapStyle.addImage(RED_PIN_ICON_ID, BitmapUtils.getBitmapFromDrawable(
+                    getResources().getDrawable(R.drawable.red_marker)));
+            loadedMapStyle.addImage(BLACK_PIN_ICON_ID, BitmapUtils.getBitmapFromDrawable(
+                    getResources().getDrawable(R.drawable.black_marker)));
+        });
 
         mapboxMap.addOnMapLongClickListener(point -> {
             double lat = point.getLatitude();
             double lng = point.getLongitude();
             Log.d(TAG, "onMapReady: hold" + lat + " " + lng);
-            showPin(lat, lng);
+            goToLocation(lat, lng, false);
             SaveLocationDialog saveBookmark = new SaveLocationDialog(lat,lng);
             saveBookmark.show(mainActivity.getSupportFragmentManager(), "SaveLocation");
             return true;
         });
 
-        mapboxMap.addOnMapClickListener(point -> {
-            hidePin();
-            return true;
-        });
+    }
+
+    private void loadPin(double lat, double lng, boolean isCurrent) {
+        Style style = mapboxMap.getStyle();
+        assert style != null;
+        style.removeLayer(ICON_LAYER_ID);
+        style.removeSource(ICON_SOURCE_ID);
+        Log.d(TAG, "loadPin: " + lat + " " + lng + " " + isCurrent);
+
+        GeoJsonSource iconGeoJsonSource = new GeoJsonSource(ICON_SOURCE_ID, FeatureCollection.fromFeatures(new Feature[] {
+                Feature.fromGeometry(Point.fromLngLat(lng, lat))}));
+        style.addSource(iconGeoJsonSource);
+
+        String pinColorId = isCurrent? BLACK_PIN_ICON_ID : RED_PIN_ICON_ID;
+        style.addLayer(new SymbolLayer(ICON_LAYER_ID, ICON_SOURCE_ID).withProperties(
+                iconImage(pinColorId),
+                iconIgnorePlacement(true),
+                iconAllowOverlap(true),
+                iconOffset(new Float[] {0f, -9f})));
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -189,9 +214,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
         if (mapViewModel.hasStart()) {
             Log.d(TAG, "onMapReady: call mishe?");
-            goToLocation(mapViewModel.getStartLat(), mapViewModel.getStartLng());
+            goToLocation(mapViewModel.getStartLat(), mapViewModel.getStartLng(), false);
             mapViewModel.startFromCurrentLoc();
         }
+
+        goToCurrentLoc();
     }
 
     @Override
@@ -271,7 +298,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
     @Override
     public void onItemClick(String name, double lat, double lng) {
-        goToLocation(lat, lng);
+        goToLocation(lat, lng, false);
         isTyping = false;
         editText.setText(name);
         mapViewModel.updateRecommendations(null);
@@ -314,21 +341,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         Log.d(TAG, "onDetach: " + mapView);
     }
 
-    public void goToLocation(double lat, double lng) {
+    public void goToLocation(double lat, double lng, boolean isCurrent) {
         CameraPosition pos = new CameraPosition.Builder()
                 .target(new LatLng(lat,lng))
                 .zoom(DEFAULT_ZOOM)
                 .tilt(DEFAULT_TILT)
                 .build();
         mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos),1000);
+        loadPin(lat, lng, isCurrent);
     }
 
     public void goToCurrentLoc() {
         android.location.Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
         double lat = lastKnownLocation.getLatitude();
         double lng = lastKnownLocation.getLongitude();
-        goToLocation(lat, lng);
-
+        goToLocation(lat, lng, true);
     }
 
     private void speak(){
@@ -349,9 +376,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             //if there was some error
             //get message of error and show
             Toast.makeText(mainActivity, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-
         }
-
     }
 
 
@@ -368,16 +393,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             }
         }
     }
-
-    public void showPin(double lat, double lng) {
-        //TODO: attach pin to lat,lng
-        mapView.addView(hoveringMarker);
-    }
-
-    public void hidePin() {
-        mapView.removeView(hoveringMarker);
-    }
-
 }
 
 

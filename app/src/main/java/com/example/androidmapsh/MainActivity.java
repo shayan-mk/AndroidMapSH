@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void goToMap (double lat, double lng) {
+    public void goToMap(double lat, double lng) {
         mapVM.setStart(lat, lng);
         navController.navigate(R.id.navigation_map);
         Log.d(TAG, "goToMap: " + lat + " " + lng);
