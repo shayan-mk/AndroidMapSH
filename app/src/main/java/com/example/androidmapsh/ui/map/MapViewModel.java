@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.androidmapsh.database.Location;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Timer;
 
 public class MapViewModel extends ViewModel {
 
@@ -15,6 +17,7 @@ public class MapViewModel extends ViewModel {
     private boolean hasStart;
     private double startLat;
     private double startLng;
+    private Timer timer;
 
     public MapViewModel() {
         hasStart = false;
@@ -65,5 +68,13 @@ public class MapViewModel extends ViewModel {
             saveLocationDialog.dismissDialog();
             saveLocationDialog = null;
         }
+    }
+
+    public void setTimer(Timer timer){
+        this.timer = timer;
+    }
+
+    public Timer getTimer() {
+        return timer;
     }
 }

@@ -73,6 +73,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     private MapboxMap mapboxMap;
     private MapView mapView;
     private EditText editText;
+    private Button speedBTN;
     private View root;
     private boolean isTyping;
     private static final double DEFAULT_ZOOM = 12;
@@ -133,17 +134,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             }
         });
 
-        Button speedBTN = root.findViewById(R.id.speed_button);
-        Timer timer = new Timer();
+        speedBTN = root.findViewById(R.id.speed_button);
         // Set the schedule function
-        timer.scheduleAtFixedRate(new TimerTask() {
-                                      @Override
-                                      public void run() {
-                                          Log.d(TAG, "run: speed");
-                                          speedBTN.setText(Double.toString(getVelocity()));
-                                      }
-                                  },
-                0, 5000);   // 1000 Millisecond  = 1 second
+
 
         return root;
     }
@@ -285,12 +278,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         Log.d(TAG, "onResume: " + mapView);
         super.onResume();
         mapView.onResume();
+        mapViewModel.setTimer(new Timer());
+        mapViewModel.getTimer().scheduleAtFixedRate(new TimerTask() {
+                                      @Override
+                                      public void run() {
+                                          Log.d(TAG, "run: speed");
+                                          speedBTN.setText(Double.toString(getVelocity()));
+                                      }
+                                  },
+                0, 5000);
     }
 
     @Override
     public void onPause() {
         Log.d(TAG, "onPause: " + mapView);
         super.onPause();
+        mapViewModel.getTimer().cancel();
         mapView.onPause();
     }
 
