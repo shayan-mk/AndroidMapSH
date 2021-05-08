@@ -3,11 +3,7 @@ package com.example.androidmapsh.ui.settings;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
-import com.example.androidmapsh.ui.map.MapFragment;
 
 public class SettingsViewModel extends ViewModel {
     public static final String TAG = SettingsViewModel.class.getName();

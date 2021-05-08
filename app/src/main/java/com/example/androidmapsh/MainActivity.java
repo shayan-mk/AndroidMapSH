@@ -8,8 +8,15 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.example.androidmapsh.database.DatabaseManager;
 import com.example.androidmapsh.database.Location;
@@ -17,23 +24,7 @@ import com.example.androidmapsh.ui.bookmarks.BookmarksViewModel;
 import com.example.androidmapsh.ui.map.MapViewModel;
 import com.example.androidmapsh.ui.settings.SettingsViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.mapbox.mapboxsdk.Mapbox;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -137,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences appSettingsPref = getSharedPreferences("AppSettingsPrefs", 0);
         settingsVM.setSharedPreferences(appSettingsPref);
 
-        Boolean isNightMode = appSettingsPref.getBoolean("NightMode", false);
+        boolean isNightMode = appSettingsPref.getBoolean("NightMode", false);
 
         if(isNightMode){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);

@@ -36,11 +36,11 @@ public class BookmarksFragment extends Fragment implements BookmarkListAdapter.O
         //bookmarksViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         //Assign variable
-        final EditText editText = root.findViewById(R.id.edit_text);
+        EditText editText = root.findViewById(R.id.edit_text);
         //TODO: search using voice
-        final Button micButton = root.findViewById(R.id.mic_button);
+        Button micButton = root.findViewById(R.id.mic_button);
         Log.d(TAG, "onCreateView: Initializing Recycler view");
-        final RecyclerView listView = root.findViewById(R.id.list_view_bookmarks);
+        RecyclerView listView = root.findViewById(R.id.list_view_bookmarks);
 
 
         BookmarkListAdapter bookmarkListAdapter = new BookmarkListAdapter(getActivity(), this, mainActivity);

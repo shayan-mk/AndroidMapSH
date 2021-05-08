@@ -5,18 +5,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.Query;
-
 import com.example.androidmapsh.MainActivity;
-import com.example.androidmapsh.ui.map.MapFragment;
 
-import java.net.ContentHandler;
 import java.util.List;
-
-import static androidx.room.OnConflictStrategy.REPLACE;
-import static com.example.androidmapsh.ui.map.MapFragment.TAG;
 
 public class DatabaseManager {
     public static final String TAG = DatabaseManager.class.getName();
@@ -92,9 +83,8 @@ public class DatabaseManager {
         return databaseManager;
     }
 
-    public static DatabaseManager initDatabaseManager(Context context){
+    public static void initDatabaseManager(Context context){
         databaseManager = new DatabaseManager();
         database = RoomDB.getInstance(context);
-        return databaseManager;
     }
 }

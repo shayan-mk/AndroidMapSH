@@ -9,7 +9,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -104,12 +103,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
 
         Button currentLocButton = root.findViewById(R.id.current_loc_button);
         currentLocButton.setOnClickListener(v -> goToCurrentLoc());
-        micButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                speak();
-            }
-        });
+        micButton.setOnClickListener(v -> speak());
 
 
         editText.addTextChangedListener(new TextWatcher() {
@@ -141,21 +135,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         Log.d(TAG, "onMapReady: ");
         MapFragment.this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-            @Override
-            public void onStyleLoaded(@NonNull Style loadedMapStyle) {
-                MapFragment.this.enableLocationComponent(loadedMapStyle);
-            }
-        });
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, this::enableLocationComponent);
 
         mapboxMap.addOnMapLongClickListener(point -> {
             double lat = point.getLatitude();
             double lng = point.getLongitude();
             Log.d(TAG, "onMapReady: hold" + lat + " " + lng);
-            goToLocation(lat, lng);
-            showPin();
+            showPin(lat, lng);
             SaveLocationDialog saveBookmark = new SaveLocationDialog(lat,lng);
             saveBookmark.show(mainActivity.getSupportFragmentManager(), "SaveLocation");
+            return true;
+        });
+
+        mapboxMap.addOnMapClickListener(point -> {
+            hidePin();
             return true;
         });
     }
@@ -366,20 +359,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: " + data);
-        switch (requestCode){
-            case REQUEST_CODE_SPEECH_INPUT:{
-                if (resultCode == RESULT_OK && null!=data){
-                    //get text array from voice intent
-                    ArrayList<String> result = data.
-                            getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    editText.setText(result.get(0));
-                }
-                break;
+        if (requestCode == REQUEST_CODE_SPEECH_INPUT) {
+            if (resultCode == RESULT_OK && null != data) {
+                //get text array from voice intent
+                ArrayList<String> result = data.
+                        getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                editText.setText(result.get(0));
             }
         }
     }
 
-    public void showPin() {
+    public void showPin(double lat, double lng) {
+        //TODO: attach pin to lat,lng
         mapView.addView(hoveringMarker);
     }
 

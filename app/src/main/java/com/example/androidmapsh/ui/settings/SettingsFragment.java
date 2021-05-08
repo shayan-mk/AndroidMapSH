@@ -7,20 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.androidmapsh.MainActivity;
 import com.example.androidmapsh.R;
 import com.example.androidmapsh.database.DatabaseManager;
-import com.example.androidmapsh.database.Location;
 
 public class SettingsFragment extends Fragment {
 
@@ -39,7 +34,7 @@ public class SettingsFragment extends Fragment {
 
 
         //Initializing truncate button
-        Button truncateButton = (Button) root.findViewById(R.id.truncate_button);
+        Button truncateButton = root.findViewById(R.id.truncate_button);
         //Setting listener for truncate button
         truncateButton.setOnClickListener(view1 -> {
 
@@ -51,27 +46,25 @@ public class SettingsFragment extends Fragment {
 
         SharedPreferences appSettingsPref = settingsViewModel.getSharedPreferences();
         SharedPreferences.Editor editor = appSettingsPref.edit();
-        Boolean isNightMode = appSettingsPref.getBoolean("NightMode", false);
+        boolean isNightMode = appSettingsPref.getBoolean("NightMode", false);
 
         //Initializing switch button
         @SuppressLint("UseSwitchCompatOrMaterialCode")
-        Switch darModeSwitch = (Switch) root.findViewById(R.id.dark_mode_switch);
+        Switch darModeSwitch = root.findViewById(R.id.dark_mode_switch);
         darModeSwitch.setChecked(isNightMode);
 
         //Setting listener for dark mode switch
-        darModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    //Dark mode
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    editor.putBoolean("NightMode", true);
-                } else {
-                    //Light mode
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    editor.putBoolean("NightMode", false);
-                }
-                editor.apply();
+        darModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                //Dark mode
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                editor.putBoolean("NightMode", true);
+            } else {
+                //Light mode
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                editor.putBoolean("NightMode", false);
             }
+            editor.apply();
         });
 
         return root;

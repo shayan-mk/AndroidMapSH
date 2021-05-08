@@ -1,20 +1,14 @@
 package com.example.androidmapsh.ui.bookmarks;
 
-import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.androidmapsh.database.Location;
-import com.example.androidmapsh.ui.map.MapFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class BookmarksViewModel extends ViewModel {
     public static final String TAG = BookmarksViewModel.class.getName();

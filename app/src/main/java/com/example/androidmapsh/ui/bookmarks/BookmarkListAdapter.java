@@ -77,10 +77,8 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapte
 //        spannable.setSpan(new ForegroundColorSpan(location.getPercentChange24h() > 0 ? Color.GREEN : Color.RED), 4, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         holder.lng.setText(spannable, TextView.BufferType.SPANNABLE);
 
-        holder.delete_button.setOnClickListener(deleteObject -> {
-            mainActivity.execute(DatabaseManager.getInstance().
-                    deleteLocation(location, mainActivity.getHandler()));
-        });
+        holder.delete_button.setOnClickListener(deleteObject -> mainActivity.execute(DatabaseManager.getInstance().
+                deleteLocation(location, mainActivity.getHandler())));
         holder.itemView.setOnClickListener(view -> listener.onItemClick(location.getLat(), location.getLng()));
     }
 

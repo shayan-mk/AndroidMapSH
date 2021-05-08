@@ -2,9 +2,6 @@ package com.example.androidmapsh.ui.map;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
-import java.util.ArrayList;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,12 +42,12 @@ public class SaveLocationDialog extends AppCompatDialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.save_location_dialog, null);
-        TextView textView = (TextView) view.findViewById(R.id.text_view);
+        TextView textView = view.findViewById(R.id.text_view);
         textView.setText("Save location: " + latitude +", "+ longitude);
         final EditText editText = view.findViewById(R.id.edit_text);
 
         // setting listeners of save buttons
-        Button saveButton = (Button) view.findViewById(R.id.saveButton);
+        Button saveButton = view.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(view1 -> {
             String name = editText.getText().toString();
             if(!name.isEmpty()){
