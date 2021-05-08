@@ -53,6 +53,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
@@ -132,7 +134,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             }
         });
 
-
+        Button speedBTN = root.findViewById(R.id.speed_button);
+        Timer timer = new Timer();
+        // Set the schedule function
+        timer.scheduleAtFixedRate(new TimerTask() {
+                                      @Override
+                                      public void run() {
+                                          Log.d(TAG, "run: speed");
+                                          speedBTN.setText(Double.toString(getVelocity()));
+                                      }
+                                  },
+                0, 5000);   // 1000 Millisecond  = 1 second
 
         return root;
     }
