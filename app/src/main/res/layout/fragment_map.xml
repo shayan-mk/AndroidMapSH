@@ -12,7 +12,7 @@
 
         <Button
             android:layout_marginRight="20dp"
-            android:layout_marginBottom= "60dp"
+            android:layout_marginBottom= "80dp"
             android:id="@+id/current_loc_button"
             android:background="@drawable/round_button"
             android:layout_width="60dp"
@@ -29,7 +29,7 @@
             android:paddingEnd="6dp" />
         <Button
             android:layout_marginLeft="20dp"
-            android:layout_marginBottom= "60dp"
+            android:layout_marginBottom= "80dp"
             android:id="@+id/speed_button"
             android:background="@drawable/round_button"
             android:layout_width="60dp"

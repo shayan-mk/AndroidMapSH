@@ -77,8 +77,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     private boolean isTyping;
     private static final double DEFAULT_ZOOM = 12;
     private static final double DEFAULT_TILT = 0;
-    private static final String RED_PIN_ICON_ID = "red-pin-icon-id";
-    private static final String BLACK_PIN_ICON_ID = "black-pin-icon-id";
+    private static final String PIN_ICON_ID = "pin-icon-id";
     private static final String ICON_LAYER_ID = "icon-layer-id";
     private static final String ICON_SOURCE_ID = "icon-source-id";
 
@@ -157,10 +156,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             MapFragment.this.enableLocationComponent(loadedMapStyle);
             UiSettings uiSettings = mapboxMap.getUiSettings();
             uiSettings.setAllGesturesEnabled(true);
-            loadedMapStyle.addImage(RED_PIN_ICON_ID, BitmapUtils.getBitmapFromDrawable(
-                    getResources().getDrawable(R.drawable.red_marker)));
-            loadedMapStyle.addImage(BLACK_PIN_ICON_ID, BitmapUtils.getBitmapFromDrawable(
-                    getResources().getDrawable(R.drawable.black_marker)));
         });
 
         mapboxMap.addOnMapLongClickListener(point -> {
@@ -186,12 +181,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
                 Feature.fromGeometry(Point.fromLngLat(lng, lat))}));
         style.addSource(iconGeoJsonSource);
 
-        String pinColorId = isCurrent? BLACK_PIN_ICON_ID : RED_PIN_ICON_ID;
+        int pinColorId = isCurrent? R.drawable.current_loc : R.drawable.red_marker;
+        style.addImage(PIN_ICON_ID, BitmapUtils.getBitmapFromDrawable(
+                getResources().getDrawable(pinColorId)));
         style.addLayer(new SymbolLayer(ICON_LAYER_ID, ICON_SOURCE_ID).withProperties(
-                iconImage(pinColorId),
+                iconImage(PIN_ICON_ID),
                 iconIgnorePlacement(true),
                 iconAllowOverlap(true),
-                iconOffset(new Float[] {0f, -9f})));
+                iconOffset(new Float[] {0f, 0f})));
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -232,9 +229,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             Log.d(TAG, "onMapReady: call mishe?");
             goToLocation(mapViewModel.getStartLat(), mapViewModel.getStartLng(), false);
             mapViewModel.startFromCurrentLoc();
+        } else {
+            goToCurrentLoc();
         }
-
-        goToCurrentLoc();
     }
 
     @Override
@@ -358,13 +355,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     }
 
     public void goToLocation(double lat, double lng, boolean isCurrent) {
+        loadPin(lat, lng, isCurrent);
         CameraPosition pos = new CameraPosition.Builder()
                 .target(new LatLng(lat,lng))
                 .zoom(DEFAULT_ZOOM)
                 .tilt(DEFAULT_TILT)
                 .build();
         mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos),1000);
-        loadPin(lat, lng, isCurrent);
+
     }
 
     public void goToCurrentLoc() {
